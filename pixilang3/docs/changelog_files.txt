@@ -1,0 +1,153 @@
+v3.8.5 (15 oct 2024):
+
+//
+// NEW
+//
+
+examples/console:
+  console_color_test.pixi
+
+examples/graphics/ffmpeg_video_effects:
+  video_speedup.pixi
+
+examples/sound/sunvox:
+  load_project_from_container.pixi
+  play_sample.pixi
+  save_project_to_container.pixi
+
+//
+// CHANGED
+//
+
+examples/basics/string:
+  string.pixi
+
+examples/benchmarks:
+  math.pixi
+
+examples/console:
+  hello.pixi
+
+examples/graphics:
+  data_processing4.pixi
+
+examples/sound:
+  wav_player.pixi
+
+
+
+
+v3.8.4 (22 oct 2023):
+
+//
+// NEW
+//
+
+examples/basics/string:
+  string_replace.pixi
+  string_split.pixi
+
+examples/sound/sunvox:
+  sunvox_export_to_wav.pixi
+
+//
+// CHANGED
+//
+
+examples/graphics_opengl:
+  camera.pixi
+
+examples/sound:
+  save_wave.pixi
+  wav_player.pixi
+
+
+
+
+v3.8.3b (15 mar 2023):
+
+//
+// CHANGED
+//
+
+examples/graphics_opengl:
+  load_png.pixi
+
+
+
+
+v3.8.3 (27 feb 2023):
+
+//
+// NEW
+//
+
+examples/graphics:
+  fonts2.pixi
+  fractal_julia_hires_optimized.pixi
+
+examples/graphics/images:
+  font_atlas.png
+
+examples/graphics:
+  waves_1D.pixi
+
+examples/graphics_opengl:
+  effector.pixi
+
+examples/sound/sound_files:
+  drums.ogg
+
+examples/sound/sunvox:
+  play_ogg.pixi
+  sunvox_input_to_output.pixi
+
+//
+// CHANGED
+//
+
+examples/basics/container:
+  properties.pixi
+
+examples/basics/string:
+  num_to_string.pixi
+  string.pixi
+  string_to_num.pixi
+
+examples/benchmarks:
+  math_results.ods
+
+examples/graphics:
+  fonts.pixi
+
+examples/graphics/images:
+  font8x8_2.png
+  font8x8_2_cyr.png
+
+examples/graphics:
+  life.pixi
+
+examples/graphics_opengl:
+  blend_modes.pixi
+  camera.pixi
+  load_png.pixi
+  mix_primitives.pixi
+
+examples/graphics_opengl/obj_loader:
+  obj_loader.pixi
+
+examples/graphics_opengl:
+  primitives.pixi
+  render_to_texture.pixi
+  text.pixi
+  triangles_3d.pixi
+  z_buffer.pixi
+
+examples/midi:
+  midi_in_test.pixi
+
+examples/sound/sunvox:
+  test.pixi
+
+examples/sound:
+  wav_player.pixi

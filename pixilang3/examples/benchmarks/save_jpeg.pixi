@@ -1,0 +1,32 @@
+include "save_image.pixi"
+
+save_image_xsize = 480
+save_image_ysize = 320
+save_image_format = FORMAT_JPEG
+
+save_image_generator = 0 while save_image_generator < 3
+{
+    logf( "Generator type: %d\n", save_image_generator )
+    
+    opt = 0 //JPEG_H2V2
+    
+    save_image_quality = 10 | opt
+    save_image_test()
+
+    save_image_quality = 50 | opt
+    save_image_test()
+
+    save_image_quality = 80 | opt
+    save_image_test()
+
+    save_image_quality = 85 | opt
+    //save_image_test()
+
+    save_image_quality = 100 | opt
+    save_image_test()
+
+    save_image_quality = 100 | opt | JPEG_TWOPASS
+    //save_image_test()
+    
+    save_image_generator + 1
+}

@@ -1,0 +1,210 @@
+v3.8.5b (14 декабря 2024):
+* исправлены ошибки + обновленный движок SunVox.
+v3.8.5 (15 октября 2024):
+* поддержка последовательности символов #! (shebang) для указания имени файла интерпретатора; https://ru.wikipedia.org/wiki/%D0%A8%D0%B5%D0%B1%D0%B0%D0%BD%D0%B3_(Unix)
+* обновленный движок SunVox;
+* новая функция: sv_sampler_par() - установить/получить параметр модуля Sampler в SunVox; подробнее: https://warmplace.ru/soft/sunvox/sunvox_lib.php
+* новый флаг PIXINFO_OPENGL для переменной PIXILANG_INFO; позволяет проверить наличие OpenGL во время исполнения программы, а не во время компиляции, как константа OPENGL; пример: if PIXILANG_INFO & PIXINFO_OPENGL {};
+* немного повышена скорость работы виртуальной машины;
+* исходники движка SunVox теперь в более читаемом виде;
+* новые опции в pixilang_config.ini: no_clog - выключить вывод лога (отладочных сообщений) в консоль; no_flog - выключить вывод лога в файл; см. также соотв. опции командной строки -ncl и -nfl;
+* исправлены ошибки.
+v3.8.4 (22 октября 2023):
+* опция для load()/fload(): LOAD_AS_RAW - загрузить файл в сыром виде (как массив байтов), без декодирования;
+* load()/fload() может декодировать аудиофайлы в формате OGG (Vorbis), MP3 и FLAC; см. пример sound/wav_player.pixi;
+* save()/fsave() может сохранять в форматы FLAC и OGG (Vorbis);
+* исправлены ошибки.
+v3.8.3b (15 марта 2023):
+* обновленный движок SunVox (2.1c).
+* исправлены ошибки.
+v3.8.3 (27 февраля 2023):
+* версии macOS ниже 10.13 больше не поддерживаются;
+* файловый Wi-Fi веб-сервер теперь доступен и на Android;
+* новая функция: sprintf2($str,$str_offset,$no_null_term,$format);
+* новая функция: get_proplist($pixi) - получить список свойств контейнера в виде массива строк;
+* новая функция: remove_proplist($list) - удалить контейнер со списком свойств;
+* num2str(): новые опциональные параметры: str_offset (смещение внутри строки str), no_null_term (не вставлять символ с кодом 0 в конце);
+* str2num(): новые опциональные параметры: str_offset (смещение внутри строки str), len (длина подстроки с числом);
+* set_font(): новые опциональные параметры: last_char, char_xsize, char_ysize, char_xsize2, char_ysize2, grid_xoffset, grid_yoffset, grid_cell_xsize, grid_cell_ysize; см. пример graphics/fonts2.pixi;
+* более корректная система координат OpenGL: из матрицы преобразований оконного менеджера удалено XY смещение на 0.375; к XY координатам точки и линии теперь прибавляется 0.5 для указания ровно на центр пикселя;
+  в редких случаях это приводит к нежелательному смещению текстур (картинки, шрифты) на один пиксель; чтобы такой проблемы не возникало, следуйте следующим правилам:
+  * избегайте нечетных высоты/ширины окна;
+  * для вычисления верхнего левого угла используйте целочисленное деление: -WINDOW_XSIZE div 2, -WINDOW_YSIZE div 2;
+* новый флаг контейнера: GL_NPOT - используйте его, если вы хотите, чтобы внутри контейнера была OpenGL-текстура, размеры которой не ограничиваются степенью двойки; на iOS этот флаг может быть включен только вместе с GL_NO_XREPEAT | GL_NO_YREPEAT;
+* добавлены дефайны PIXI_TIMERS_NUM, PIXI_FONTS_NUM; опции приложения (g_app_options[]) pixi_timers_num, pixi_fonts_num; опции в файле конфигурации pixilang_config.ini: pixi_timers_num, pixi_fonts_num;
+* обновленный движок SunVox (2.1c).
+* исправлены ошибки.
+v3.8.2b (5 марта 2022):
+* обновленный движок SunVox (2.0e).
+v3.8.2 (7 февраля 2022):
+* добавлен оператор цикла for( инициализация ; условие выполнения цикла ; модификация ) { тело цикла }; пример: for( i = 0; i < 4; i + 1 ) { printf( "i=%d\n", i ) };
+* новая функция: atan2($y,$x) - угол (в радианах) между осью X и вектором ($x,$y);
+* gl_bind_framebuffer(): добавлены опциональные параметры: flags, viewport x,y,width,height;
+* константа WINDOW_ZSIZE - глубина окна (для OpenGL); задает диапазон значений Z: от -WINDOW_ZSIZE (дальше) до WINDOW_ZSIZE (ближе);
+* функции sv_save() и sv_fsave() теперь доступны и при сборке из исходников;
+* обновленный движок SunVox (2.0c);
+* исправлен баг в fft() (перепутаны местами положительные и отрицательные частоты);
+* исходники снова открыты;
+* обновленные примеры и документация;
+* исправлены ошибки.
+v3.8.1b (15 декабря 2020):
+* новые функции: sv_pause(), sv_resume() для приостановки/возобновления проигрывания звукового потока SunVox;
+* исправлены ошибки.
+v3.8.1 (25 ноября 2020):
+* обновленный движок SunVox (1.9.6b);
+* исправлены ошибки.
+v3.8 (4 сентября 2020):
+* Android 6+: поддержка USB MIDI устройств;
+* Android: поддержка архитектур arm64 и x86_64;
+* версии Android ниже 4.1 больше не поддерживаются;
+* добавлен оператор "!" - логическое отрицание (НЕ); пример: if !condition { ... };
+* добавлен оператор "~" - побитовая инверсия; пример: a = ~b;
+* движок модульного синтезатора SunVox теперь встроен в Pixilang; см. примеры и readme.txt в папке examples/sound/sunvox; полная документация находится здесь: https://warmplace.ru/soft/sunvox/sunvox_lib.php;
+* новая опция командной строки "-?" для получения помощи со списком всех доступных опций;
+* новая функция remove_prop( container, property_name ) - удалить указанное свойство из контейнера;
+* новая функция get_file_format( filename, stream ) - получить формат (одна из констант FORMAT_xxxx) файла или потока (если задан stream и filename == -1); пример использования: basics/get_file_format.pixi;
+* новая функция get_fformat_mime( fileformat ) - получить строку с MIME-типом для указанного формата файла;
+* новая функция get_fformat_ext( fileformat ) - получить строку с расширением для указанного формата файла;
+* новая функция reinterpret_type( value, mode, intermediate_value_bits ) - смена типа данных без изменения содержимого; подробнее: https://en.wikipedia.org/wiki/Type_punning ; пример использования: basics/type_punning.pixi;
+* новая функция textinput_dialog( default_text, dialog_name ) открывает диалог ввода текста (пока только латиница) и возвращает введенную строку; см. пример graphics/textinput_dialog.pixi;
+* новая функция update_gl_data( cnum ) отправляет запрос на обновление текстуры OpenGL, связанной с контейнером cnum; используйте эту функцию, если поменялось содержимое контейнера, но размер остался прежний;
+* новая функция conv_filter() - фильтр свертки (матрица свертки); см. пример graphics/convolution_filter.pixi;
+* флаги (опции) для conv_filter(): CONV_FILTER_COLOR, CONV_FILTER_BORDER_EXTEND, CONV_FILTER_BORDER_SKIP, CONV_FILTER_UNSIGNED;
+* новая функция get_text_xysize() (параметры такие же, как в функциях get_text_xsize и get_text_ysize); возвращаемое значение = xsize | ( ysize << 16 );
+* num_to_str(): опциональный параметр radix (поддерживаются значения 10 и 16);
+* print(), get_text_xsize(), get_text_ysize(): добавлены опциональные параметры str_offset и str_size;
+* опция (флаг) для file_dialog() - FDIALOG_FLAG_LOAD (проверять наличие файла);
+* поддержка доп. управляющих последовательностей в строках, в соответствии с этим описанием: https://en.wikipedia.org/wiki/Escape_sequences_in_C ;
+* новая глобальная переменная PIXILANG_INFO - информация (флаги) о текущей среде исполнения Pixilang;
+* набор констант для переменной PIXILANG_INFO: PIXINFO_MODULE, PIXINFO_MULTITOUCH, PIXINFO_TOUCHCONTROL, PIXINFO_MIDIIN и т.д.;
+* новые примеры (sound): wav_recorder, sunvox/;
+* новые примеры (graphics): convolution_filter, textinput_dialog, gears, demoscene/;
+* новый тест производительности (examples/benchmarks): variables;
+* новая библиотека (lib) - demo (Pixilang Demoscene Engine, движок для многослойной анимации со звуком);
+* примеры с основами Pixilang теперь находятся в папке examples/basics;
+* новая документация: https://warmplace.ru/soft/pixilang/manual_ru.php
+* поле EVT_UNICODE удалено, т.к. не используется - в будущем получение unicode символов будет реализовано через спец. события;
+* исправлена ошибка в обработке параметра max_xsize (функции print(), get_text_xsize(), get_text_ysize());
+* исправлены ошибки.
+v3.7b (4 октября 2018):
+* Linux, Windows, macOS: исправлена ошибка с неработающим событием EVT_SCREENRESIZE.
+v3.7 (27 августа 2018):
+* iOS: файлы пользователя доступны через приложение Files;
+* iOS: частичная поддержка USB/Bluetooth клавиатуры (без отпускания клавиш, без Home/End, без F1/F2/...);
+* поддержка 64-разрядных версий Windows (x86_64);
+* Linux (OpenGL), macOS, Windows (OpenGL): добавлена поддержка поворота интерфейса (меняется в глобальных настройках Pixilang или в файле конфигурации);
+* Android (4.0 и выше): Настройки -> Интерфейс: добавлена опция "Скрыть системные панели" для полноэкранного режима;
+* новые встроенные глобальные переменные: WINDOW_SAFE_AREA_X, WINDOW_SAFE_AREA_Y, WINDOW_SAFE_AREA_W, WINDOW_SAFE_AREA_H;
+* новая функция - get_audio_sample_rate( source ); source = 0, если нужно узнать локальную частоту дискретизации; source = 1, если нужно узнать глобальную частоту дискретизации (из настроек Pixilang);
+* в функцию gl_blend_func() добавлены два опциональных параметра sfactor_alpha и dfactor_alpha; используйте их, если вам нужен аналог функции glBlendFuncSeparate() из стандарта OpenGL;
+* через gl_uniform() теперь можно менять содержимое массивов в шейдерах, если использовать эту функцию следующим образом: gl_uniform( var_location, src_container, vector_size, first_vector, count ), где count - это количество векторов, которые будут записаны в массив из контейнера src_container;
+* новые OpenGL функции для получения значений параметров состояния: gl_get_int( value ) и gl_get_float( value ) (аналоги функций glGetIntegerv() и glGetFloatv());
+* новая OpenGL функция gl_bind_texture( cont, texture_unit ) для привязки контейнера к указанному текстурному блоку; см. пример shader_multitexture;
+* новые OpenGL константы для функции gl_get_int(): GL_MAX_TEXTURE_SIZE, GL_MAX_VERTEX_ATTRIBS, GL_MAX_VERTEX_UNIFORM_VECTORS, GL_MAX_VARYING_VECTORS,.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, GL_MAX_TEXTURE_IMAGE_UNITS, GL_MAX_FRAGMENT_UNIFORM_VECTORS;
+* в браузер файлов добавлены списки недавних файлов и папок; отключить эти списки можно в настройках интерфейса;
+* в браузере файлов теперь можно перейти в предыдущую директорию, нажав BACKSPACE или ВЛЕВО;
+* новые примеры (graphics): camera_accum, math_phase, fonts;
+* новые примеры (graphics_opengl): shader_multitexture, shader_vector_array, shaders4, shaders5, shaders6, shaders7, state;
+* новый пример (sound): looper, expression_synth;
+* многие примеры обновлены;
+* pixilang_config.ini: опция denorm 0/1 - выключить/включить денормализованные числа; не используйте, если точно не знаете, зачем оно нужно :)
+* исправлены ошибки.
+v3.6 (24 октября 2016):
+* новая документация: http://www.warmplace.ru/wiki/pixilang:manual_ru;
+* поддержка мультитач в версиях для Linux и Windows (7 и выше);
+* поддержка Raspberry Pi (OpenGL ES 2.0, курсор мыши невидимый);
+* поддержка архитектуры arm64 (протестировано на одноплатном компьютере PINE64) (SDL, без OpenGL);
+* в функции triangles3d() и sort_triangles3d() добавлен опциональный параметр tnum (кол-во треугольников);
+* добавлена новая глобальная переменная UI_FONT_SCALE, которая содержит коэффициент масштабирования текста в вашем интерфейсе; эта переменная может быть изменена пользователем в настройках Pixilang;
+* добавлен новый контейнер LANG_NAME, в котором находится имя системного языка в POSIX формате [language][_TERRITORY][.CODESET][@modifier]; примеры: en_US, ru_RU.utf8;
+* новые функции: set_pixel_size(), get_pixel_size(); используйте их, если нужно изменить размер пикселей (уменьшить разрешение) на экране;
+* оптимизация следующих функций: wavetable_generator(), apply_filter();
+* оптимизация графики под OpenGL ES 2.0;
+* новые OpenGL функции (работа с шейдерами): gl_new_prog(), gl_use_prog(), gl_uniform(), gl_uniform_matrix();
+* новые OpenGL константы (шейдеры по умолчанию) для функции gl_new_prog(): GL_SHADER_SOLID, GL_SHADER_GRAD, GL_SHADER_TEX_ALPHA_SOLID, GL_SHADER_TEX_ALPHA_GRAD, GL_SHADER_TEX_RGB_SOLID, GL_SHADER_TEX_RGB_GRAD;
+* новый флаг для функции copy(): COPY_CLIPPING (для корректного обрезания значений при несовпадении разрядности);
+* после загрузки WAV-файла, в контейнере могут быть установлены свойства loop_start (начало петли), loop_len (длина петли), loop_type (тип петли: 1-обыная;2-пинг-понг);
+* режим INT8 удален из wavetable_generator();
+* максимальное количество контейнеров может быть задано параметром pixi_containers_num в файле конфигурации pixilang_config.ini;
+* подкорректированы и улучшены некоторые примеры;
+* новые примеры (graphics): primitives, multitouch, coordinates, demo01;
+* новые примеры (graphics_opengl): shaders, shaders2, shaders3;
+* добавлены библиотеки (папка lib): gfx_primitives;
+* исправлены ошибки.
+v3.5 (17 августа 2014):
+* экспериментальная поддержка камеры (для iOS, Android и Linux); подробности в примере camera.pixi;
+* в функцию copy() добавлен опциональный параметр flags;
+* в функции fgets(), fwrite() и fread() добавлен опциональный параметр offset, задающий смещение относительно начала контейнера в байтах;
+* в функции print(), get_text_xsize() и get_text_ysize() добавлен опциональный параметр max_xsize, задающий максимальную ширину текста в пикселях;
+* новый флаг для функции copy(): COPY_NO_AUTOROTATE (не переворачивать данные после копирования из GL_SCREEN);
+* тип DYNAMIC удален из языка;
+* в функции thread_create() появился дополнительный параметр - flags; на данный момент для этого параметра доступен только один флаг - THREAD_FLAG_AUTO_DESTROY;
+* новый флаг контейнера: GL_NO_ALPHA;
+* новые операции обработки данных для функции op_cn(): OP_H_INTEGRAL и OP_V_INTEGRAL (дискретный интеграл), OP_H_DERIVATIVE и OP_V_DERIVATIVE (дискретная производная), OP_H_FLIP и OP_V_FLIP, OP_SUM;
+* новая функция: gl_bind_framebuffer();
+* новая функция: rotate() для поворота контейнера;
+* новая функция: copy_and_resize() для копирования блока данных с последующим масштабированием;
+* новая функция: get_system_log();
+* новые примеры (sound): input_to_output, input_visualizer;
+* новые примеры (graphics): camera, filtering.motion_blur2, integral_and_derivative, rotate_container, flip, copy_and_resize, save_avi_mjpeg;
+* новые примеры (graphics_opengl): texture, render_to_texture;
+* исправлены ошибки.
+v3.4.8 (25 января 2014):
+* добавлена поддержка аудио-формата AIFF (только загрузка);
+* добавлена поддержка прогрессивных JPEG файлов;
+* новые функции: new_filter(), remove_filter(), reset_filter(), init_filter(), apply_filter() - для работы с рекурсивными и нерекурсивными фильтрами;
+* новая функция: wavetable_generator() - по сути очень быстрый многоканальный сэмплер, где сэмпл имеет фиксированный размер (256 для 8бит или 32768 для 16бит) и всегда зациклен;
+* новые примеры (sound): filter_16bit, filter_16bit_fixed_point, filter_32bit;
+* исправлены ошибки.
+v3.4.7 (28 сентября 2013):
+* добавлена новая глобальная переменная UI_SCALE, которая содержит коэффициент масштабирования интерфейса; пример использования: button_size = PPI * UI_SCALE * 0.5;
+* изменен формат константы PIXILANG_VERSION;
+* операция OP_COPY теперь доступна и для функции op_cn() (для заполнения прямоугольной области одним значением);
+* новая операция обработки данных для функции op_cn(): OP_SUB2 (вычитание с измененным порядком операндов (N - C1[ i ]));
+* новае операции обработки данных для функции op_cc(): OP_EXCHANGE (обмен значений), OP_BMUL (if C2[ i ] == 0 { C1[ i ] = 0 }), OP_COMPARE;
+* новые операции обработки данных для функций op_cc() и op_cn(): OP_COPY_LESS (копировать при условии C1[ i ] < C2[ i ]), OP_COPY_GREATER;
+* новая операция обработки данных для функции op_ccn(): OP_MUL_RSHIFT (умножение с последующим сдвигом результата);
+* теперь контейнер можно масштабировать с интерполяцией; пример: resize( img, 100, 100, PIXEL, RESIZE_INTERP2 );
+* добавлены флаги для функции resize(): RESIZE_INTERP1 (грубое масштабирование), RESIZE_INTERP2 (линейная интерполяция), RESIZE_UNSIGNED_INTERP2, RESIZE_COLOR_INTERP1, RESIZE_COLOR_INTERP2;
+* добавлена опция для load(): LOAD_FIRST_FRAME - загрузить только первый кадр анимации;
+* добавлены опции экспорта в JPEG: JPEG_TWOPASS, JPEG_H1V1, JPEG_H2V1, JPEG_H2V2; подробности использования в примере examples/graphics/save_jpeg.pixi;
+* новые функции: zlib_pack(), zlib_unpack() - для паковки/распаковки контейнера с использованием библиотеки zlib;
+* новая функция: show_memory_debug_messages( enable );
+* новые функции: color_gradient() и gradient() для рисования 2D градиента в пиксельном или любом другом контейнере;
+* новая функция: split_ycbcr() - аналогична split_rgb(), только для преобразования в/из формата YCbCr;
+* новая функция: fprintf() - форматный вывод текста в указанный поток (открытый функцией fopen() или fopen_mem());
+* новые функции: logf() - форматный вывод текста в буфер для логов (журнал событий); get_log() - получить текущий лог;
+* новые функции: set_disk0(), get_disk0(); подбробности использования в примере examples/graphics/virtual_disk.pixi;
+* новые функции: fload() и fsave() для загрузки и выгрузки из/в поток данных, открытый функцией fopen или fopen_mem;
+* новая функция: fopen_mem() - открыть файл, который находится в контейнере (в памяти);
+* новая функция: setxattr() (posix);
+* новая функция: gl_draw_arrays() - гибрид OpenGL функций glColor4ub(), glBindTexture(), glVertexPointer(), glColorPointer(), glTexCoordPointer(), glDrawArrays();
+* новая функция: gl_blend_func() - полный аналог OpenGL функции glBlendFunc();
+* добавлены константы ZLib (уровни компрессии): Z_NO_COMPRESSION, Z_BEST_SPEED, Z_BEST_COMPRESSION, Z_DEFAULT_COMPRESSION;
+* добавлены константы OpenGL для функции gl_draw_arrays(): GL_POINTS, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_TRIANGLES;
+* добавлены константы OpenGL для функции gl_blend_func(): GL_ONE, GL_ZERO, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR и т.д.;
+* новый пример (console): fopen_mem;
+* новые примеры (graphics): save_jpeg_to_memory, rotozoom4, rotozoom5, rotozoom6, ffmpeg_video_effects/zoom, log_messages, split_ycbcr, split_ycbcr2, gradient2, gradient3, zlib, fft2, gamma_correction;
+* новые примеры (graphics_opengl): primitives, blend_modes;
+* добавлены Pixilang библиотеки (папка lib): ffmpeg_video_export, ffmpeg_video_import, pixitracker_audio_engine, pseudo_hdr, gl_primitives, gamma_correction;
+* добавлена поддержка JACK Audio Connection Kit (для iOS и Linux);
+* исправлены ошибки.
+v3.4.6 (29 марта 2013):
+* новая функция: remove_with_alpha() - удалить контейнер и связанный с ним контейнер альфа-канала (прозрачность);
+* новая опция в Preferences->Interface: Window Parameters (размер окна, полноэкранный режим); полноэкранный режим работает только в Windows and Linux;
+* исправлены ошибки.
+v3.4.5 (23 марта 2013):
+* новые эффекты для функции effector(): EFF_SPREAD_LEFT, EFF_SPREAD_RIGHT, EFF_SPREAD_UP, EFF_SPREAD_DOWN;
+* дополнительные опции драйвера ASIO (в окне Preferences);
+* теперь запись с микрофона и Line-in доступна также для Linux (ALSA), Windows (MME,DirectSound,ASIO), Windows Mobile (только с full duplex драйверами) и OSX;
+* в стартовом диалоге добавлена кнопка Prefs - она открывает окно глобальных настроек Pixilang;
+* новая функция: create_directory() - создать директорию;
+* новая функция: get_flags() - получить флаги контейнера;
+* новая функция: prefs_dialog() - открыть окно с глобальными настройками;
+* новая функция: open_url() - открыть URL в браузере;
+* новая функция: vsync() - включение/выключение вертикальной синхронизации;
+* новые примеры (graphics): split_rgb2, effector2, effector3;
+* исправлены ошибки.
+...
+v3.0 (01 сентября 2011):
+* первый выпуск.

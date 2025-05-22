@@ -1,0 +1,41 @@
+include "show_log.pixi"
+
+//
+// Variables
+//
+
+a = 4
+b = 5.5
+some_var_with_long_NAME = "hello!" //string container
+c = #FFFF00 //yellow color
+d = 'cNsT' //multi-character constant (max 4 chars)
+
+logf( "a = %d\n", a )
+logf( "b = %f\n", b )
+logf( "some_var_with_long_NAME = %d (container number)\n", some_var_with_long_NAME )
+logf( "some_var_with_long_NAME = %s\n", some_var_with_long_NAME )
+logf( "c = %x\n", c )
+logf( "d = %x\n", d )
+
+fn some_function()
+{
+    //Local variables:
+    $a = 12
+    $b = 44
+}
+//$a and $b are not available here (outside the some_function() body)
+
+//
+// Variables with unicode (UTF-8) names
+//
+
+переменная1 = "Hello Pixi!"
+переменная2 = "ABC"
+переменная3 = ""
+переменная3 = переменная2
+
+logf( "Variables with UTF8 names:\n" )
+logf( "%s\n", переменная1 )
+logf( "%s\n", переменная3 )
+
+show_log()

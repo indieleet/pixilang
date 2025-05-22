@@ -1,0 +1,30 @@
+set_pixel_size( WINDOW_XSIZE / 480 )
+resize( get_screen(), WINDOW_XSIZE, WINDOW_YSIZE )
+
+img = load( "images/test2.jpg" )
+
+start_timer( 0 )
+
+while( 1 )
+{
+    t = get_timer( 0 ) / 256
+
+    transp( 256 )
+    clear();
+    pixi( img, 0, 0 )
+
+    effector( EFF_NOISE, 128, WHITE, -2000, -2000, 4000, 4000, 1, ( sin( t / 4 ) + 1 ) * 64 )
+    effector( EFF_NOISE, 256, YELLOW, -100, -100 + sin(t)*32, 95, 95 )
+    effector( EFF_NOISE, 256, WHITE, 5, -100 + cos(t)*32, 95, 95, sin( t ) * 8, cos( t ) * 8 )
+    effector( EFF_HBLUR, ( sin( t ) + 1 ) * 64, WHITE, -100 + sin(t)*32, 5, 95, 95 )
+    effector( EFF_VBLUR, ( sin( t ) + 1 ) * 64, WHITE, 5 + cos(t)*32, 5, 95, 95 )
+
+    ts = ""
+    sprintf( ts, "FPS:%u", FPS )
+    print( ts, -get_xsize( get_screen() ) / 2 + 8, -get_ysize( get_screen() ) / 2 + 8, WHITE, TOP | LEFT )
+
+    while( get_event() ) { if EVT[ EVT_TYPE ] == EVT_QUIT { halt } }
+    
+    frame()
+}
+

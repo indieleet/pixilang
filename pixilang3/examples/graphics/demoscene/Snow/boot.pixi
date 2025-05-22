@@ -1,0 +1,243 @@
+/*
+    Snow Demo
+
+    MIT license:
+
+    Copyright (c) 2020, Alexander Zolotov <nightradio@gmail.com>
+    WarmPlace.ru
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to
+    deal in the Software without restriction, including without limitation the
+    rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+    sell copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+    IN THE SOFTWARE.
+*/
+
+include "../../../../lib/demo.pixi"
+
+//demo_show_fps = 1
+demo_fps = 20
+demo_opengl = 1
+demo_video_export_q = 100
+//demo_video_export = "video.mkv"
+
+demo_load_sunvox( "data/music.sunvox" )
+if demo_video_export > 0
+{
+    sv_set_autostop( sv, 1 );
+}
+
+img0 = load( "data/img0.png" )
+img0_ = clone( img0 )
+img1 = load( "data/img1.png" )
+img1_ = clone( img1 )
+img2 = load( "data/img2.png" )
+img3 = load( "data/img3.png" )
+img4 = load( "data/img4.png" )
+imgS = clone( img1 )
+imgX = clone( img1 ) ; clean( imgX )
+img_xsize = get_xsize( img0 )
+img_ysize = get_ysize( img0 )
+img_hxsize = img_xsize div 2
+img_hysize = img_ysize div 2
+set_key_color( img0, img0[0] )
+set_key_color( img1, img1[0] )
+set_key_color( img1_, img1[0] )
+set_key_color( img3, img3[0] )
+set_key_color( img4, img4[0] )
+set_key_color( imgX, imgX[0] )
+snow_cnt = 64
+snow = new( snow_cnt, 4, INT )
+i = 0 while i < snow_cnt
+{
+    snow[ i, 0 ] = -img_hxsize + rand() * img_xsize / 32768 //x
+    snow[ i, 1 ] = ( -img_hysize - ( rand() * img_ysize / 32768 ) ) * 2 //y
+    snow[ i, 2 ] = rand() & 1
+    i + 1
+}
+scr = get_screen()
+set_screen( img0_ )
+effector( EFF_VBLUR, 64 )
+set_screen( scr )
+snow_color = #80A0FF
+bg_color = #304070
+fg_color1 = get_blend( GREEN, #DDEEFF, 180 )
+fg_color2 = #DDEEFF
+
+demo_init()
+
+demo_add_scene( 0, 1, 0, scene_main )
+//demo_add_scene( 0, 1, demo_sound_len-1, DEMO_STOP ) //time unit = 1 line
+
+//demo_set_time( 1, demo_sound_len - 10 )
+
+demo_play()
+demo_deinit()
+
+fn get_t( $t, $period )
+{
+    ret( ( $t % ( $period - 1 ) ) / $period )
+}
+
+fn scene_main( $t1, $t2, $len, $frame_cnt )
+{
+    //time function = 1 (SunVox player); time unit = 1 line;
+    //$t1 - current time;
+    //$t2 - current time relative to the beginning of the scene;
+    //$len - scene length;
+
+    $t = get_t( $t2, 44100 * 40 )
+
+    clear()
+
+    $wscr = get_screen()
+
+    set_screen( imgS )
+    clear()
+    $img1_changed = 0
+    $i = 0 while $i < snow_cnt
+    {
+	transp( $i * 8 )
+	$x = snow[ $i, 0 ]
+	$y = snow[ $i, 1 ]
+	$y + 1 + snow[ $i, 2 ]
+	$rr = rand()
+	if $rr > 32768-4000 { $x + 1 }
+	if $rr < 4000 { $x - 1 }
+	$yy = $y div 2
+	dot( $x, $yy, snow_color )
+	if $i & 1
+	{
+	    if ($frame_cnt+$i) & 1
+	    {
+		dot( $x - 1, $yy, snow_color )
+		dot( $x + 1, $yy, snow_color )
+		dot( $x, $yy - 1, snow_color )
+		dot( $x, $yy + 1, snow_color )
+	    }
+	    else
+	    {
+		dot( $x - 1, $yy - 1, snow_color )
+		dot( $x + 1, $yy - 1, snow_color )
+		dot( $x - 1, $yy + 1, snow_color )
+		dot( $x + 1, $yy + 1, snow_color )
+	    }
+	}
+	$tt = sin( $i + $frame_cnt / 16 )
+	if $tt < 0 { $tt = 0 }
+	$tt * $tt
+	$tt * $tt
+	$tt * $tt
+	$tt * $tt
+	$tt * $tt
+	$tt * $tt
+	transp( $tt * 128 )
+	pixi( img2, $x, $yy, snow_color )
+	transp( $tt * 32 )
+	pixi( img2, $x, $yy, snow_color, 4, 4 )
+	transp( $tt * 255 )
+	dot( $x, $yy, WHITE )
+	$c2 = img1_[ $x + img_hxsize, $yy + img_hysize ]
+	$c1 = $c2
+	$c3 = $c2
+	if $x >= -img_hxsize { $c1 = img1_[ $x + img_hxsize - 1, $yy + img_hysize ] }
+	if $x < img_hxsize { $c3 = img1_[ $x + img_hxsize + 1, $yy + img_hysize ] }
+	$reinit = 0
+	while $c2 != BLACK
+	{
+	    if $c1 == BLACK
+	    {
+		$x - 1
+		break
+	    }
+	    if $c3 == BLACK
+	    {
+	        $x + 1
+	        break
+	    }
+	    $reinit = 1
+	    img1_[ $x + img_hxsize, $yy + img_hysize - 1 ] = WHITE
+	    $img1_changed = 1
+	    break
+	}
+	if $y > img_hysize*2 { $reinit = 1 }
+	if $x > img_hxsize { $reinit = 1 }
+	if $x < -img_hxsize { $reinit = 1 }
+	if $reinit
+	{
+	    $x = -img_hxsize + rand() * img_xsize / 32768 //x
+	    $y = ( -img_hysize - ( rand() * img_ysize / 8 / 32768 ) ) * 2 //y
+	}
+	snow[ $i, 0 ] = $x
+	snow[ $i, 1 ] = $y
+	$i + 1
+    }
+    transp( 255 )
+    set_screen( $wscr )
+    if $img1_changed { update_gl_data( img1_ ) }
+    update_gl_data( imgS )
+
+    $start_f = demo_fps * 60
+    $len = demo_fps * 4
+    if $frame_cnt >= $start_f && $frame_cnt <= $start_f + $len
+    {
+	$y = ( $frame_cnt - $start_f ) / $len
+	$yy = $y
+	if $yy > 0.5 { $yy = 1 - $yy }
+	$yy = $yy * 10
+	if $yy > 1 { $yy = 1 }
+	set_screen( imgX )
+	clear()
+	if ( $y * 30 |0 ) == 14 || ( $y * 30 |0 ) == 16
+	{
+	    pixi( img4, -50, 70 - $yy*13, WHITE )
+	}
+	else
+	{
+	    pixi( img3, -50, 70 - $yy*13, WHITE )
+	}
+	set_screen( $wscr )
+	update_gl_data( imgX )
+    }
+
+    $s1 = demo_xsize div (img_xsize*1.2)
+    $s2 = demo_ysize div (img_ysize*1.2)
+    $s = $s1
+    if $s2 < $s1 { $s = $s2 }
+    if $s <= 0 { $s = 1 }
+    t_reset()
+    t_scale( $s, $s, $s )
+
+    transp( 128 )
+    $ss = demo_xsize / img_xsize / $s
+    pixi( img0_, 0, -32, bg_color, $ss, $ss )
+    transp( 255 )
+    pixi( img0, 0, 0, bg_color )
+    pixi( img1_, 0, 0, fg_color2 )
+    pixi( img1, 0, 0, fg_color1 )
+    pixi( imgX, 0, 0, fg_color1 )
+    gl_blend_func( GL_SRC_ALPHA, GL_ONE ) //addition
+    pixi( imgS )
+    transp( 128 )
+    pixi( imgS, 0, 0, BLUE, 4, 4 )
+    transp( 255 )
+    gl_blend_func() //normal
+
+    t_reset()
+
+    transp( 255 )
+
+    if sv_get_status( sv ) == 0 { demo_stop() }
+}

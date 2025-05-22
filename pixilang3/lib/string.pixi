@@ -1,0 +1,69 @@
+// str1: "..str2..str2.." ---> str1: "..str3..str3.."
+// all occurring str2 will be replaced by str3
+fn replace_string( $str1, $str2, $str3 )
+{
+    $str1_len = strlen( $str1 )
+    $str2_len = strlen( $str2 )
+    $str3_len = strlen( $str3 )
+    if $str1_len <= 0 { ret }
+    if $str2_len <= 0 { ret }
+    if $str3_len < 0 { ret }
+    $ptr = 0
+    while 1
+    {
+        $ptr = strstr( $str1, $ptr, $str2, 0 )
+        if $ptr < 0 { break }
+        $d = $str3_len - $str2_len
+        if $str1_len + $d > get_size( $str1 )
+        {
+            resize( $str1, $str1_len + $d, 1 )
+        }
+        copy( $str1, $str1, $ptr + $str3_len, $ptr + $str2_len, $str1_len )
+        copy( $str1, $str3, $ptr, 0, $str3_len )
+        $str1_len + $d
+        $str1[ $str1_len ] = 0
+        $ptr + $str3_len
+    }
+}
+
+/*
+//example:
+$strings = split_string( "hello pixi, text2, text3", ", " )
+for( $i = 0; $i < get_size($strings); $i + 1 )
+{
+  printf( "%d: %s\n", $i, $strings[ $i ] )
+}
+*/
+fn split_string( $str, $separator )
+{
+    $rv = new( 16, 1, INT )
+    clean( $rv, -1 )
+    $str_count = 0
+    $str_len = strlen( $str )
+    $separator_len = strlen( $separator )
+    $ptr = 0
+    while 1
+    {
+	$prev_ptr = $ptr
+        $ptr = strstr( $str, $ptr, $separator, 0 )
+        if $ptr < 0
+        {
+	    if $prev_ptr >= $str_len { break }
+	    $ptr = $str_len
+    	}
+        $len = $ptr - $prev_ptr
+	$s = new( $len, 1, INT8 )
+	copy( $s, $str, 0, $prev_ptr, $len )
+	$cur_size = get_size( $rv )
+	if $str_count >= $cur_size
+	{
+	    $cur_size = $str_count + 16
+	    resize( $rv, $cur_size, 1, INT )
+	}
+	$rv[ $str_count ] = $s
+	$str_count + 1
+        $ptr + $separator_len
+    }
+    resize( $rv, $str_count, 1, INT )
+    ret( $rv )
+}

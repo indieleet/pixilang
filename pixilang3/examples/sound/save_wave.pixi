@@ -1,0 +1,33 @@
+wav = new( 100000, 1, INT16 )
+generator( OP_SIN, wav, 0, 32767 / 2, 0.1, 0 )
+wav.sample_rate = 44100
+wav.channels = 1
+wav.loop_type = 1
+wav.loop_start = 25000
+wav.loop_len = 50000
+
+//fix loop points (OPTIONAL):
+$prev_v = wav[ wav.loop_start ]
+for( $i = 0; $i < 1000; $i + 1 )
+{
+    $v = wav[ wav.loop_start ]
+    if $prev_v > 0 && $v <= 0 { break }
+    $prev_v = $v
+    wav.loop_start + 1
+}
+$prev_v = wav[ wav.loop_start + wav.loop_len ]
+for( $i = 0; $i < 1000; $i + 1 )
+{
+    $v = wav[ wav.loop_start + wav.loop_len ]
+    if $prev_v > 0 && $v <= 0 { break }
+    $prev_v = $v
+    wav.loop_len + 1
+}
+
+//SAVE:
+save( wav, "sine.wav", FORMAT_WAVE )
+//save( wav, "sine.flac", FORMAT_FLAC, 9 )
+//save( wav, "sine.ogg", FORMAT_OGG, 40 )
+
+printf( "sine.wav created\n" )
+printf( "Loop: %d %d\n", wav.loop_start, wav.loop_len )

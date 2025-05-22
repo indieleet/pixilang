@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="308051"
+    android:versionName="3.8.5b"
+    android:installLocation="auto" >
+
+    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+    <uses-feature android:name="android.hardware.screen.landscape" android:required="false" />
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
+    <uses-feature android:name="android.hardware.audio.low_latency" android:required="false" />
+	<uses-feature android:name="android.hardware.camera" android:required="false"/>
+   	<uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
+   	<uses-feature android:name="android.hardware.camera.front" android:required="false"/>
+   	<uses-feature android:name="android.hardware.camera.front.autofocus" android:required="false"/>
+    <uses-feature android:name="android.software.midi" android:required="false" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name" >
+        
+        <activity android:name=".MyNativeActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" 
+            android:screenOrientation="landscape"
+            android:exported="true" >
+            
+            <meta-data android:name="android.app.lib_name" android:value="sundog" />
+            
+            <intent-filter>
+            	<action android:name="android.intent.action.MAIN" />
+            	<category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            
+        </activity>
+        
+    </application>
+
+</manifest>

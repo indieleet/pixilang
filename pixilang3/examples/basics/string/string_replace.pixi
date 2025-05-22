@@ -1,0 +1,16 @@
+include "../show_log.pixi"
+include "../../../lib/string.pixi"
+
+test( "Hello Pixi! Hello World!", "Hello", "?" )
+
+//replace $str1 by $str2
+fn test( $input, $str1, $str2 )
+{
+    logf( "INPUT STRING: \"%s\"\n", $input )
+    logf( "REPLACE ALL \"%s\" BY \"%s\"\n", $str1, $str2 )
+    replace_string( $input, $str1, $str2 )
+    logf( "OUTPUT: \"%s\"\n", $input  )
+    logf( "\n" )
+}
+
+show_log()

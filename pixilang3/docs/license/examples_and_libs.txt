@@ -1,0 +1,2 @@
+For all *.pixi examples and libs included in this Pixilang distribution:
+the file is in the public domain if the license is not explicitly described inside the file.

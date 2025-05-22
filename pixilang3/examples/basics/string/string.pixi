@@ -1,0 +1,26 @@
+include "../show_log.pixi"
+
+//String in Pixilang is a container of type INT8
+
+//Container with some string:
+//(it will be created at compile time; don't remove it manually)
+str = "Hello Pixi! ####"
+//now the str variable contains a number - the number of the container that was created during program compilation.
+
+logf( "%s\n", str ) //print our string
+logf( "String container ID = %d\n", str )
+
+//Replace chars 12, 13, 14 and 15:
+str[ 12 ] = 'A'
+str[ 13 ] = 'B'
+str[ 14 ] = 'C'
+str[ 15 ] = 'D'
+
+logf( "%s\n", str ) //print our string again
+
+//The end of the string is either the end of the container or a null character.
+//Let's try to break the string with a null character:
+str[ 5 ] = 0
+logf( "with null character:\n%s\n", str )
+
+show_log()

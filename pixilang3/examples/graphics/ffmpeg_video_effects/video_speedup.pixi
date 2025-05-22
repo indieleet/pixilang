@@ -1,0 +1,84 @@
+xsize = 1920
+ysize = 1080
+INPUT_FILE = "input.mp4"
+OUTPUT_FILE = -1 //"out.mkv" //-1 - preview
+OUTPUT_BITRATE = 15000
+RATE = 4
+INERTIA = 0 //0 - off; 1...
+
+
+resize( get_screen(), xsize, ysize )
+img = clone( get_screen() )
+r1 = new( xsize, ysize, FLOAT32 )
+g1 = new( xsize, ysize, FLOAT32 )
+b1 = new( xsize, ysize, FLOAT32 )
+r2 = new( xsize, ysize, FLOAT32 )
+g2 = new( xsize, ysize, FLOAT32 )
+b2 = new( xsize, ysize, FLOAT32 )
+clean( r1 )
+clean( g1 )
+clean( b1 )
+
+include "../../../lib/ffmpeg_video_import.pixi"
+include "../../../lib/ffmpeg_video_export.pixi"
+
+video_import = ffmpeg_video_import_open(
+    INPUT_FILE,
+    xsize, ysize, 0, 0 )
+
+video_export = -1
+if OUTPUT_FILE > 0
+{
+    video_export = ffmpeg_video_export_open( OUTPUT_FILE, xsize, ysize, 30, OUTPUT_BITRATE, 0 )
+}
+
+clear( BLACK )
+
+while( 1 )
+{
+    while( get_event() )
+    {
+	if EVT[ EVT_TYPE ] == EVT_QUIT
+        {
+    	    breakall
+	}
+    }
+
+    $mblur = RATE
+    clear( BLACK )
+    if INERTIA
+    {
+	$mblur + INERTIA
+	if INERTIA > 1
+	{
+	    op_cn( OP_MUL, r1, INERTIA )
+	    op_cn( OP_MUL, g1, INERTIA )
+	    op_cn( OP_MUL, b1, INERTIA )
+	}
+    }
+    else
+    {
+	clean( r1 )
+	clean( g1 )
+	clean( b1 )
+    }
+    $i = 0 while $i < RATE
+    {
+	if ffmpeg_video_import_read( video_import, img ) { breakall }
+	split_rgb( 0, img, r2, g2, b2 )
+	op_cc( OP_ADD, r1, r2 )
+	op_cc( OP_ADD, g1, g2 )
+	op_cc( OP_ADD, b1, b2 )
+	$i + 1
+    }
+    op_cn( OP_MUL, r1, 1 / $mblur )
+    op_cn( OP_MUL, g1, 1 / $mblur )
+    op_cn( OP_MUL, b1, 1 / $mblur )
+    split_rgb( 1, get_screen(), r1, g1, b1 )
+    if ffmpeg_video_export_write( video_export, get_screen() ) { breakall }
+
+    frame()
+}
+
+ffmpeg_video_import_close( video_import )
+ffmpeg_video_export_close( video_export )

@@ -1,0 +1,9 @@
+fn gl_callback( $userdata ) {} is the only place where you can use the OpenGL drawing functions.
+
+gl_callback() can be called:
+  by the user (through the frame() call);
+  by Pixilang engine at any time (for example, after the window resize).
+
+gl_callback() may be called from another thread,
+so be careful with sharing some data between the main code and the gl_callback() - 
+use mutex_lock()/mutex_unlock() to protect this data. See example: generator_plasma.pixi

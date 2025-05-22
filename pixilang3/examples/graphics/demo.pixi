@@ -1,0 +1,120 @@
+set_pixel_size( WINDOW_XSIZE / 240 )
+resize( get_screen(), WINDOW_XSIZE, WINDOW_YSIZE )
+
+SAVE_TO_GIF = 0
+GIF_FILE_NAME = "demo01.gif"
+
+logf( "Press SPACE for screenshot\n" )
+
+scr = get_screen()
+xsize = get_xsize( scr )
+ysize = get_ysize( scr ) //Height of the current screen
+hxsize = xsize div 2
+hysize = ysize div 2
+
+f = 0
+screenshot_cnt = 0
+anim = new( xsize, ysize )
+clean( anim )
+create_anim( anim )
+anim.fps = 60
+total_frames = anim.fps * 10
+skip_frames = 10
+
+font = load( "images/font10x10.png" )
+set_key_color( font, BLACK )
+set_font( 32, font, 16, 6 )
+
+clear()
+
+frame_size = xsize * ysize
+
+//Set perspective matrix:
+matrix = new( 4, 4, FLOAT )
+clean( matrix )
+t_reset()
+t_get_matrix( matrix )
+matrix[ 2 * 4 + 3 ] = -0.008
+
+start_timer( 0 )
+while 1
+{
+    if SAVE_TO_GIF
+    {
+	t = f / anim.fps * 1000
+    }
+    else
+    {
+	t = get_timer( 0 )
+    }
+    t2 = t % 10000
+    t3 = t2 / 10000
+
+    t_set_matrix( matrix )
+    t_scale( 3, 3, 3 )
+    t_rotate( t3 * 360, 0, 1, 0 )
+    rr = sin( ( t3 + 0 ) * 2 * M_PI * 2 ) * 255
+    gg = cos( ( t3 + 0 ) * 8 * M_PI * 2 ) * 255
+    bb = cos( ( t3 + 0 ) * 4 * M_PI * 2 ) * 255
+    print( "PIXILANG", 0, 0, get_color( rr, gg, bb ) )
+    t_reset()
+    
+    transp( 200 )
+    r = 2 
+    effector( EFF_SPREAD_LEFT, r )
+    effector( EFF_SPREAD_RIGHT, r )
+    effector( EFF_SPREAD_UP, r ) 
+    effector( EFF_SPREAD_DOWN, r )
+    
+    t_set_matrix( matrix )
+    t_scale( 2, 2, 2 )
+    t_rotate( t3 * 360, 0, 1, 0 )
+    print( "PIXILANG", 0, 0, WHITE )
+    t_reset()
+    
+    if SAVE_TO_GIF
+    {
+	frame()
+    }
+    else
+    {
+	frame( 1000 / 60 )
+    }
+    while get_event() 
+    { 
+	if EVT[ EVT_TYPE ] == EVT_BUTTONDOWN
+        {
+            key = EVT[ EVT_KEY ]
+            if key == ' ' 
+            {	
+        	ts = ""
+        	sprintf( ts, "demo01_scr%02d.png", screenshot_cnt )
+        	screenshot_cnt + 1
+        	save( scr, ts, FORMAT_PNG )
+            }
+        }
+	if EVT[ EVT_TYPE ] == EVT_QUIT { breakall } 
+    }
+    
+    if SAVE_TO_GIF
+    {
+	if f % skip_frames == 0
+	{
+	    copy( anim, scr )
+    	    pack_frame( anim )
+            if f < total_frames - 1
+	    {
+    		clone_frame( anim )
+        	anim.frame + 1
+            }
+        }
+	f + 1
+	if f >= total_frames { breakall }
+    }    
+}
+
+if SAVE_TO_GIF
+{	
+    anim.fps / skip_frames
+    save( anim, GIF_FILE_NAME, FORMAT_GIF )
+}

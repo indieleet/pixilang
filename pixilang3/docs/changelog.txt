@@ -1,0 +1,284 @@
+v3.8.5b (14 dec 2024):
+* bug fixes + updated SunVox engine.
+v3.8.5 (15 oct 2024):
+* shebang (#!) character sequence support; https://en.wikipedia.org/wiki/Shebang_(Unix)
+* updated SunVox engine;
+* new function: sv_sampler_par() - set/get SunVox sampler parameter; more info: https://warmplace.ru/soft/sunvox/sunvox_lib.php
+* new PIXINFO_OPENGL flag for PIXILANG_INFO variable; use the following code to check for OpenGL at runtime (unlike OPENGL constant, which reports the presence of OpenGL during compilation): if PIXILANG_INFO & PIXINFO_OPENGL {};
+* speed optimization;
+* SunVox engine sources are no longer obfuscated (but still a bit minified);
+* new options in pixilang_config.ini: no_clog - disable logging to console; no_flog - disable logging to file; also see the corresponding command line options -ncl and -nfl;
+* bug fixes.
+v3.8.4 (22 oct 2023):
+* load()/fload() option: LOAD_AS_RAW - load the file as raw data (array of bytes) without decoding;
+* load()/fload() can decode OGG (Vorbis), MP3 and FLAC audio files; see sound/wav_player.pixi;
+* save()/fsave() can save to FLAC and OGG (Vorbis);
+* bug fixes.
+v3.8.3b (15 mar 2023):
+* updated SunVox engine (2.1c);
+* bug fixes.
+v3.8.3 (27 feb 2023):
+* macOS 10.9 support has been dropped; now the minimum is 10.13;
+* file Wi-Fi web server is now also available on Android;
+* new function: sprintf2($str,$str_offset,$no_null_term,$format);
+* new function: get_proplist($pixi) - get a list (array of strings) of properties for the specified container;
+* new function: remove_proplist($list) - remove the list of properties;
+* num2str(): new optional parameters: str_offset (offset within the string), no_null_term (no NULL terminator at the end);
+* str2num(): new optional parameters: str_offset (offset within the string), len (length of substring with number);
+* set_font(): new optional parameters: last_char, char_xsize, char_ysize, char_xsize2, char_ysize2, grid_xoffset, grid_yoffset, grid_cell_xsize, grid_cell_ysize; see graphics/fonts2.pixi;
+* more correct OpenGL coordinate system: XY offset 0.375 removed from the window manager transformation matrix; 0.5 is added to the XY coordinates of dot() and line() to point exactly to the center of the pixel;
+  in rare cases, this leads to an undesirable displacement of textures (pictures, fonts) by one pixel; to avoid such a problem, follow the following rules:
+  * avoid odd window height/width;
+  * use integer division to calculate top left corner: -WINDOW_XSIZE div 2, -WINDOW_YSIZE div 2;
+* new container flag: GL_NPOT - set it if you want to use OpenGL texture (inside the container) whose dimensions are not limited to a power of two; on iOS this flag can only be enabled in conjunction with GL_NO_XREPEAT | GL_NO_YREPEAT;
+* new defines PIXI_TIMERS_NUM, PIXI_FONTS_NUM; app options (g_app_options[]) pixi_timers_num, pixi_fonts_num; pixilang_config.ini options pixi_timers_num, pixi_fonts_num;
+* updated SunVox engine (2.1c).
+* bug fixes.
+v3.8.2b (5 mar 2022):
+* updated SunVox engine (2.0e).
+v3.8.2 (7 feb 2022):
+* additional loop operator for( initialization ; condition ; increment ) { loop body }; example: for( i = 0; i < 4; i + 1 ) { printf( "i=%d\n", i ) };
+* new function: atan2($y,$x) - angle (in radians) between the positive X axis and the vector ($x,$y);
+* gl_bind_framebuffer(): additional optional parameters: flags, viewport x,y,width,height;
+* WINDOW_ZSIZE const - window depth (for OpenGL); sets the range of Z values: from -WINDOW_ZSIZE (far) to WINDOW_ZSIZE (near);
+* sv_save() and sv_fsave() functions are now available in source code as well;
+* updated SunVox engine (2.0c);
+* fixed a bug in fft() (reversed positive and negative frequencies);
+* source code is available again;
+* updated examples and documentation;
+* bug fixes.
+v3.8.1b (15 dec 2020):
+* new functions: sv_pause(), sv_resume() to pause/resume the SunVox audio stream;
+* bug fixes.
+v3.8.1 (25 nov 2020):
+* updated SunVox engine (1.9.6b);
+* bug fixes.
+v3.8 (4 sep 2020):
+* Android 6+: USB MIDI support;
+* Android: arm64 and x86_64 support;
+* Android 2.3 support has been dropped; now the minimum is 4.1;
+* new operator "!" - logical NOT; example: if !condition { ... };
+* new operator "~" - bitwise NOT (inversion); example: a = ~b;
+* SunVox modular synth engine is now part of Pixilang; see examples/sound/sunvox (pixi-files and readme.txt); full API documentation is here: https://warmplace.ru/soft/sunvox/sunvox_lib.php;
+* new command-line option "-?" for help (show usage with all possible options);
+* new function remove_prop( container, property_name ) - remove the property from the container;
+* new function get_file_format( filename, stream ) - get file (or stream, if filename == -1) format (one of the FORMAT_xxxx constants); see basics/get_file_format.pixi;
+* new function get_fformat_mime( fileformat ) - get MIME type (string) for specified file format;
+* new function get_fformat_ext( fileformat ) - get the extension (string) for specified file format;
+* new function reinterpret_type( value, mode, intermediate_value_bits ) - for the type punning https://en.wikipedia.org/wiki/Type_punning ; see basics/type_punning.pixi;
+* new function textinput_dialog( default_text, dialog_name ) - open SunDog-based text input dialog and return the entered string; only Latin letters are supported now; see graphics/textinput_dialog.pixi example;
+* new function update_gl_data( cnum ) sends a request to update the OpenGL texture associated with container cnum; use this function if the contents (pixels) of the container have changed, but the size remains the same;
+* new function conv_filter() - convolution filter (convolution matrix); see graphics/convolution_filter.pixi example;
+* conv_filter() flags (options): CONV_FILTER_COLOR, CONV_FILTER_BORDER_EXTEND, CONV_FILTER_BORDER_SKIP, CONV_FILTER_UNSIGNED;
+* new function get_text_xysize() (the parameters are the same as for functions get_text_xsize and get_text_ysize); return value = xsize | ( ysize << 16 );
+* num_to_str(): optional parameter radix (supported values: 10 and 16);
+* print(), get_text_xsize(), get_text_ysize(): new optional parameters: str_offset, str_size;
+* option (flag) for the file_dialog() - FDIALOG_FLAG_LOAD (check file availability);
+* support of additional escape sequences as described here: https://en.wikipedia.org/wiki/Escape_sequences_in_C ;
+* new built-in global variable: PIXILANG_INFO - information (flags) about the current Pixilang runtime environment;
+* set of constants for PIXILANG_INFO: PIXINFO_MODULE, PIXINFO_MULTITOUCH, PIXINFO_TOUCHCONTROL, PIXINFO_MIDIIN, etc.;
+* new sound examples: wav_recorder, sunvox/;
+* new graphics examples: convolution_filter, textinput_dialog, gears, demoscene/;
+* new benchmark (examples/benchmarks): variables;
+* new library (lib) - demo (Pixilang Demoscene Engine);
+* examples with the basics of the Pixilang are now in this folder: examples/basics;
+* new documentation: https://warmplace.ru/soft/pixilang/manual.php
+* field EVT_UNICODE has been removed (never used) - in future it will be implemented through special events;
+* fixed bug in the processing of the max_xsize parameter (functions print(), get_text_xsize(), get_text_ysize());
+* bug fixes.
+v3.7b (4 oct 2018):
+* Linux, Windows, macOS: fixed bug with EVT_SCREENRESIZE.
+v3.7 (27 aug 2018):
+* iOS: user files are now available through the Files app;
+* iOS: partial USB/Bluetooth keyboard support (no key release, no Home/End, no F1/F2/...);
+* 64-bit Windows support (x86_64);
+* Linux (OpenGL), macOS, Windows (OpenGL): interface rotation support (in the global Pixilang preferences, or in the config file) has been added;
+* Android (4.0 and higher): System Settings -> Interface: new option "Hide system bars" for true fullscreen mode;
+* new built-in global variables: WINDOW_SAFE_AREA_X, WINDOW_SAFE_AREA_Y, WINDOW_SAFE_AREA_W, WINDOW_SAFE_AREA_H;
+* new function - get_audio_sample_rate( source ); source = 0 for the local sample rate; source = 1 for the global (from Preferences) sample rate;
+* now gl_uniform() can change the contents of arrays if you use this function as follows: gl_uniform( var_location, src_container, vector_size, first_vector, count ), where count is the number of vectors to write to the array;
+* two optional parameters (sfactor_alpha, dfactor_alpha) were added to gl_blend_func(); use them if you need an analog of function glBlendFuncSeparate() (from the std. OpenGL API);
+* new OpenGL functions for querying GL state: gl_get_int( value ) and gl_get_float( value ) (based on glGetIntegerv() and glGetFloatv());
+* new OpenGL function gl_bind_texture( cont, texture_unit ) for binding the container to the specified texture image unit; see example shader_multitexture;
+* new OpenGL constants for the gl_get_int(): GL_MAX_TEXTURE_SIZE, GL_MAX_VERTEX_ATTRIBS, GL_MAX_VERTEX_UNIFORM_VECTORS, GL_MAX_VARYING_VECTORS, GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, GL_MAX_TEXTURE_IMAGE_UNITS, GL_MAX_FRAGMENT_UNIFORM_VECTORS;
+* lists of the recent files and folders have been added to the file browser; you can disable it in the Preferences -> Interface;
+* new keyboard shortcut in the file browser: BACKSPACE or LEFT - go to the parent directory;
+* new graphics examples: camera_accum, math_phase, fonts;
+* new OpenGL examples: shader_multitexture, shader_vector_array, shaders4, shaders5, shaders6, shaders7, state;
+* new sound example: looper, expression_synth;
+* pixilang_config.ini: denorm 0/1 - disable/enable denormal numbers; DON'T use this if you don't know what it is :)
+* many examples have been updated;
+* bug fixes.
+v3.6 (24 oct 2016):
+* new documentation: http://www.warmplace.ru/wiki/pixilang:manual_en;
+* multitouch support has been added to the Linux and Windows (7 and higher) versions;
+* Raspberry Pi support (OpenGL ES 2.0, no mouse cursor);
+* Linux arm64 support (tested on PINE64 64-bit Single Board Computer) (SDL-based, no OpenGL); 
+* additional parameter (optional) tnum (number of triangles) has been added to triangles3d() and sort_triangles3d();
+* new built-in global variable UI_FONT_SCALE - use it to scale the text in your UI; variables like this can be changed by user in the system settings of Pixilang;
+* new built-in container LANG_NAME with the name of current system language (in POSIX format [language][_TERRITORY][.CODESET][@modifier]); examples: en_US, ru_RU.utf8;
+* new functions: set_pixel_size(), get_pixel_size(); use it to change the size of the screen pixels;
+* optimization of the following functions: wavetable_generator(), apply_filter();
+* Pixilang is now optimized for OpenGL ES 2.0;
+* new OpenGL functions (working with shaders): gl_new_prog(), gl_use_prog(), gl_uniform(), gl_uniform_matrix();
+* new OpenGL constants (default shader names) for the gl_new_prog(): GL_SHADER_SOLID, GL_SHADER_GRAD, GL_SHADER_TEX_ALPHA_SOLID, GL_SHADER_TEX_ALPHA_GRAD, GL_SHADER_TEX_RGB_SOLID, GL_SHADER_TEX_RGB_GRAD;
+* new flag for the copy(): COPY_CLIPPING;
+* ability to import the loop points from WAV file; the following container properties will be created: loop_start, loop_len, loop_type (1-normal,2-ping-pong);
+* INT8 mode has been removed from wavetable_generator();
+* maximum number of containers can be defined by the pixi_containers_num parameter in the pixilang_config.ini file;
+* revised examples;
+* new graphics examples: primitives, multitouch, coordinates, demo01;
+* new OpenGL examples: shaders, shaders2, shaders3;
+* new libraries (lib directory): gfx_primitives;
+* bug fixes.
+v3.5 (17 aug 2014):
+* experimental camera support (for iOS, Android and Linux); API is unstable now; check the camera.pixi example for more details;
+* additional parameter (optional) flags has been added to copy();
+* additional parameter (optional) offset (write/read offset in bytes) has been added to fgets(), fwrite() and fread();
+* additional parameter (optional) max_xsize has been added to print(), get_text_xsize() and get_text_ysize();
+* new flag for the copy(): COPY_NO_AUTOROTATE (don't rotate pixels from GL_SCREEN);
+* type DYNAMIC has been removed;
+* flags parameter has been added to the thread_create() function; now only one flag available - THREAD_FLAG_AUTO_DESTROY;
+* new container flag: GL_NO_ALPHA;
+* new data processing operations for the op_cn(): OP_H_INTEGRAL and OP_V_INTEGRAL (running sum), OP_H_DERIVATIVE and OP_V_DERIVATIVE (first difference), OP_H_FLIP and OP_V_FLIP, OP_SUM;
+* new function: gl_bind_framebuffer();
+* new function: rotate() for rotating the container;
+* new function: copy_and_resize();
+* new function: get_system_log();
+* new sound examples: input_to_output, input_visualizer;
+* new graphics examples: camera, filtering.motion_blur2, integral_and_derivative, rotate_container, flip, copy_and_resize, save_avi_mjpeg;
+* new OpenGL examples: texture, render_to_texture;
+* bug fixes.
+v3.4.8 (25 jan 2014):
+* added AIFF support (load only);
+* added progressive JPEG support;
+* new functions: new_filter(), remove_filter(), reset_filter(), init_filter(), apply_filter() - for working with recursive (IIR) and nonrecursive (FIR) digital filters;
+* new function: wavetable_generator() - very fast multichannel sampler, where the sample is always looped and fixed-size (256 for 8bit data, or 32768 for 16bit data);
+* new sound examples: filter_16bit, filter_16bit_fixed_point, filter_32bit;
+* bug fixes.
+v3.4.7 (28 sep 2013):
+* new built-in global variable UI_SCALE - use it to scale your UI elements; for example: button_size = PPI * UI_SCALE * 0.5;
+* PIXILANG_VERSION format has been changed;
+* OP_COPY is now also available for op_cn();
+* new data processing operation for the op_cn(): OP_SUB2 (subtraction with reverse order of the operands (N - C1[ i ]));
+* new data processing operations for the op_cc(): OP_EXCHANGE, OP_BMUL (if C2[ i ] == 0 { C1[ i ] = 0 }), OP_COMPARE;
+* new data processing operations for the op_cc() and op_cn(): OP_COPY_LESS (copy only if C1[ i ] < C2[ i ]), OP_COPY_GREATER;
+* new data processing operation for the op_ccn(): OP_MUL_RSHIFT (multiplication with bitwise right shift);
+* now a container can be resized with interpolation; example: resize( img, 100, 100, PIXEL, RESIZE_INTERP2 );
+* added flags for the resize() function: RESIZE_INTERP1 (rough), RESIZE_INTERP2 (linear), RESIZE_UNSIGNED_INTERP2, RESIZE_COLOR_INTERP1, RESIZE_COLOR_INTERP2;
+* new option for the load() function: LOAD_FIRST_FRAME;
+* new JPEG saving options (flags): JPEG_TWOPASS, JPEG_H1V1, JPEG_H2V1, JPEG_H2V2; see details in examples/graphics/save_jpeg.pixi;
+* new functions: zlib_pack(), zlib_unpack() - for container compressing/decompressing using zlib;
+* new function: show_memory_debug_messages( enable );
+* new functions: color_gradient(), gradient();
+* new function: split_ycbcr() - same as split_rgb() but for YCbCr conversion;
+* new function: fprintf() - print formatted output to the stream (opened by fopen() or fopen_mem());
+* new functions: logf() - send formatted output to the log buffer; get_log() - get the log buffer;
+* new functions: set_disk0(), get_disk0(); see details in examples/graphics/virtual_disk.pixi;
+* new functions: fload() and fsave() for loading and saving from/to the stream (which is opened by fopen() or fopen_mem());
+* new function: fopen_mem() - open container like a file;
+* new function: setxattr() (posix);
+* new function: gl_draw_arrays() - hybrid of OpenGL functions glColor4ub(), glBindTexture(), glVertexPointer(), glColorPointer(), glTexCoordPointer(), glDrawArrays();
+* new function: gl_blend_func() - full analog of the OpenGL function glBlendFunc() (specify pixel arithmetic);
+* added ZLib constants (compression levels): Z_NO_COMPRESSION, Z_BEST_SPEED, Z_BEST_COMPRESSION, Z_DEFAULT_COMPRESSION;
+* added OpenGL constants (modes) for the gl_draw_arrays(): GL_POINTS, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_TRIANGLES;
+* added OpenGL constants (operations) for the gl_blend_func(): GL_ONE, GL_ZERO, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR etc.;
+* new console example: fopen_mem;
+* new graphics examples: save_jpeg_to_memory, rotozoom4, rotozoom5, rotozoom6, ffmpeg_video_effects/zoom, log_messages, split_ycbcr, split_ycbcr2, gradient2, gradient3, zlib, fft2, gamma_correction;
+* new OpenGL graphics example: primitives, blend_modes;
+* new libraries (lib directory): ffmpeg_video_export, ffmpeg_video_import, pixitracker_audio_engine, pseudo_hdr, gl_primitives, gamma_correction;
+* support of JACK Audio Connection Kit (for iOS and Linux);
+* bug fixes.
+v3.4.6 (29 mar 2013):
+* new function: remove_with_alpha() - remove the container and its alpha channel (linked container);
+* new option in the Preferences->Interface: Window Parameters (width, height, fullscreen mode); fullscreen mode is only compatible with Windows and Linux;
+* bug fixes.
+v3.4.5 (23 mar 2013):
+* new effects for effector() function: EFF_SPREAD_LEFT, EFF_SPREAD_RIGHT, EFF_SPREAD_UP, EFF_SPREAD_DOWN;
+* new ASIO driver options;
+* audio input (Mic/Line-in) is now also available for Linux (ALSA), Windows (MME,DirectSound,ASIO), Windows Mobile (with full duplex drivers only) and OSX;
+* added Prefs (Preferences) button in the starting screen;
+* new function: create_directory();
+* new function: get_flags() - get container flags;
+* new function: prefs_dialog() - show global Pixilang preferences;
+* new function: open_url() - open web browser window with selected URL;
+* new function: vsync(): vsync(1) - enable vertical synchronization; vsync(0) - disable;
+* new graphics examples: split_rgb2, effector2, effector3;
+* bug fixes.
+v3.4.4 (24 jan 2013):
+* additional (optional) parameters for the split_rgb() function: image_offset, channel_offset, size;
+* additional (optional) parameters for the replace_values() function: dest_offset, src_offset, size;
+* new file format: FORMAT_PIXICONTAINER (entire Pixilang container with properties, animation etc.);
+* new container flags: GL_NO_XREPEAT, GL_NO_YREPEAT;
+* new GIF saving options (flags): GIF_GRAYSCALE, GIF_DITHER; see details in the examples/graphics/save_gif.pixi;
+* new graphics examples: save_and_load_pixicontainer, replace_values;
+* bug fixes.
+v3.4.3 (24 dec 2012):
+* license changed from New BSD to MIT;
+* Android: support of x86 and ARMv7-A;
+* added Android native library (.so) support;
+* new folder with examples - native_library;
+* new data processing operations for op_cn(): OP_COLOR_SUB2, OP_DIV2; use them if you need N/C[i] instead of C[i]/N;
+* new transformation functions: t_push_matrix() and t_pop_matrix(); use them to save and restore current transformation state;
+* new graphics examples: labyrinth, clock, save_gif_anim2, hdr_simulation, tiny_generator1-5;
+* bug fixes.
+v3.4.2 (17 nov 2012):
+* optimization;
+* fixed bug with stop() function;
+* new syntax to access container properties: container_name.property_name = property_value;
+* new data processing operations for op_cn() and op_cc() functions: OP_SUB, OP_SSUB;
+* new graphics function - split_rgb();
+* threads.pixi example has been moved from console to graphics directory;
+* examples/benchmarks/math.pixi updated to version 2.0;
+* new graphics examples: split_rgb;
+* new console examples: container;
+* bug fixes.
+v3.4.1 (13 oct 2012):
+* new key code - KEY_MENU;
+* added address checking; now you can't call undefined functions;
+* new container flag: CFLAG_INTERP - enable linear image interpolation (software mode);
+* new constant - OPENGL (1 - if OpenGL available);
+* new function: get_real_path() - convert Pixilang-style path (e.g. 1:/img.png) to the real filesystem path;
+* new functions for working with file list: new_flist(), remove_flist(), get_flist_name(), get_flist_type(), flist_next(); 
+* new graphics examples: interpolation, tornado, file_list_sorted;
+* new console examples: get_real_path, file_list, file_list_sorted;
+* bug fixes.
+v3.4 (26 sep 2012):
+* Android port (sources + Google Play app);
+* iOS port (only sources are available);
+* new experimental feature - OpenGL acceleration (not available for Windows Mobile);
+* new effect for effector() function: EFF_COLOR;
+* new data processing operations for op_cn() function: OP_LIMIT_TOP, OP_LIMIT_BOTTOM, OP_ABS;
+* new data processing operations for op_cn() and op_cc() functions: OP_EQUAL, OP_LESS, OP_GREATER, OP_SMUL (multiplication with saturation);
+* new command line function - bytecode export; how to use: type "pixilang -c source_name.pixi" and source_name.pixicode file will be produced; warning: *.pixicode file is less cross-platrorm than its text source;
+* new format of access to the container elements: container[ X, Y ]; example: pixels[ 3, 4 ] = WHITE;
+* new operators to control the while loop: break, break2, break3, break4, breakall, continue;
+* new OpenGL functions: set_gl_callback(), remove_gl_data();
+* new system functions: get_file_size(), printf();
+* new graphics function: clear_zbuf();
+* new functions for containers: set_flags(), reset_flags();
+* new combination of parameters (dest,dest_offset,src,src_offset) for functions strcat(), strcmp(), strstr();
+* new combination of parameters (string,string_offset) for function strlen(); 
+* new graphics examples: fractal_julia_multithread;
+* new console examples: printf, string_append, string_compare, string_length, while_loop;
+* new sound examples: pixitracker_player;
+* graphics_opengl examples has been added;
+* bug fixes.
+v3.3 (28 may 2012):
+* new functions: copy_file();
+* new functions for working with native dynamic libraries: dlopen(); dlclose(); dlsym(); dlcall();
+* new functions: triangles3d(); sort_triangles3d();
+* new data processing operations: OP_COLOR_ADD; OP_COLOR_SUB; OP_COLOR_MUL; OP_COLOR_DIV;
+* added GIF support (load/save);
+* added animation support (for example, you can load and save animated GIFs);
+* new examples: triangles_3d.pixi; save_gif.pixi; save_gif_anim.pixi; load_gif.pixi; fractal_julia_fast.pixi; data_processing3.pixi; data_processing4.pixi; animated_container.pixi;
+* bug fixes.
+v3.2 (24 jan 2012):
+* optimization;
+* bug fixes.
+v3.1 (11 nov 2011):
+* MIDI support added;
+* optimization;
+* bug fixes.
+v3.0 (01 sep 2011):
+* the first release.

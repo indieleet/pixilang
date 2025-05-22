@@ -1,0 +1,34 @@
+include "../show_log.pixi"
+
+fft_size = 8
+fft_im = new( fft_size, 1, FLOAT ) //Imaginary part
+fft_re = new( fft_size, 1, FLOAT ) //Real part
+clean( fft_im )
+clean( fft_re )
+fft_re[ 0 ] = 1
+fft_re[ 1 ] = 1
+fft_re[ 2 ] = 1
+fft_re[ 3 ] = 1
+
+logf( "Initial data (input signal before FFT):\n" )
+logf( "Re\tIm\n" )
+for( i = 0; i < fft_size; i + 1 )
+{
+    logf( "%f\t%f\n", fft_re[ i ], fft_im[ i ] )
+}
+
+logf( "After FFT:\n" )
+fft( 0, fft_im, fft_re )
+for( i = 0; i < fft_size; i + 1 )
+{
+    logf( "%f\t%f\n", fft_re[ i ], fft_im[ i ] )
+}
+
+logf( "After inverse FFT:\n" )
+fft( 1, fft_im, fft_re )
+for( i = 0; i < fft_size; i + 1 )
+{
+    logf( "%f\t%f\n", fft_re[ i ], fft_im[ i ] )
+}
+
+show_log()

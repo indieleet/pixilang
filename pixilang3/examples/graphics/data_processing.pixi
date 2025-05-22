@@ -1,0 +1,19 @@
+set_pixel_size( WINDOW_XSIZE / 480 )
+resize( get_screen(), WINDOW_XSIZE, WINDOW_YSIZE )
+
+img = load( "images/test.jpg" )
+
+while 1
+{
+	op_cn( OP_ADD, img, 256, 16, 16, 128, 128 )
+	op_cn( OP_AND, img, get_color( 255, 0, 0 ), 16 + 16 + 128, 16, 128, 128 )
+	op_cn( OP_AND, img, get_color( 0, 255, 0 ), 16, 16 + 16 + 128, 128, 128 )
+	op_cn( OP_MUL, img, 3, 16 + 16 + 128, 16 + 16 + 128, 128, 128 )
+
+	pixi( img, 0, 0 )
+
+	while get_event() { if EVT[ EVT_TYPE ] == EVT_QUIT { halt } }
+
+	frame()
+}
+

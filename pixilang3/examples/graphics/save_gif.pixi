@@ -1,0 +1,4 @@
+img = load( "images/test.jpg" )
+save( img, "saved_gif_picture.gif", FORMAT_GIF )
+save( img, "saved_gif_picture_dither.gif", FORMAT_GIF, GIF_DITHER )
+save( img, "saved_gif_picture_grayscale.gif", FORMAT_GIF, GIF_GRAYSCALE )

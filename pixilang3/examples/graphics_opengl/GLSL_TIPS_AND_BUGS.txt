@@ -1,0 +1,14 @@
+[ Tips ]
+
+OpenGL ES 2.0. Renderer: VideoCore IV HW (Raspberry Pi):
+    * for(;;) loop maximum number of iterations = 16;
+    * int i = 0 must be inside of the for(;;); example: for( int i = 0;...
+
+Floating point numbers must be written with a dot (even zeros, when comparing or in function parameters).
+Convert from int to float: f = float( i )
+
+[ Known bugs ]
+
+OpenGL version: 3.0 Mesa 9.2.2. Renderer: Mesa DRI Intel(R) Ivybridge Mobile. GLSL: 1.30. - Invalid read from i965_dri.so (valgrind test). Some bug in the driver?
+Two solutions: 1) remove the "const" from fshader; OR 2) don't remove the shaders after the program link (in Pixilang code).
+FIXED IN MESA 13.0.6 (tested 9 feb 2018).

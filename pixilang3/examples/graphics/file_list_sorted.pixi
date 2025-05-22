@@ -1,0 +1,31 @@
+set_pixel_size( WINDOW_XSIZE / 480 )
+resize( get_screen(), WINDOW_XSIZE, WINDOW_YSIZE )
+
+include "../../lib/file_utils.pixi"
+
+clear()
+l = get_sorted_file_list( CURRENT_PATH, "pixi" )
+size = get_ysize( l )
+y = -get_ysize( 0 ) / 2
+x = -get_xsize( 0 ) / 2
+ts = "" sprintf( ts, "%s ==> %d files\n", CURRENT_PATH, size ) print( ts, x, y, WHITE, LEFT | TOP ) y + 8
+i = 0 while( i < size )
+{
+    $file_name = l[ 0, i ]
+    $file_type = l[ 1, i ]
+    if $file_type == 0
+    {
+	sprintf( ts, "FILE %s\n", $file_name ) print( ts, x, y, RED, LEFT | TOP ) y + 8
+    }
+    else
+    {
+	sprintf( ts, "DIR  %s\n", $file_name ) print( ts, x, y, YELLOW, LEFT | TOP ) y + 8
+    }
+    i + 1
+}
+remove_file_list( l )
+while( 1 )
+{
+    while( get_event() ) { if EVT[ EVT_TYPE ] == EVT_QUIT { halt } }
+    frame()
+}

@@ -1,0 +1,529 @@
+/*
+    6bit Genesis Demo
+    v1.1 (modified 14 sep 2019)
+
+    MIT license:
+
+    Copyright (c) 2014 - 2019, Alexander Zolotov <nightradio@gmail.com>
+    WarmPlace.ru
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to
+    deal in the Software without restriction, including without limitation the
+    rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+    sell copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+    IN THE SOFTWARE.
+*/
+
+include "../../../../lib/demo.pixi"
+
+//
+//
+//
+
+demo_xsize = 1280 div 4
+demo_ysize = 720 div 4
+demo_video_export_zoom = 4
+//demo_video_export = "6bit_genesis.mkv"
+
+demo_load_sunvox( "data/music.sunvox" )
+
+demo_init()
+my_demo_init()
+
+demo_play()
+
+demo_deinit()
+
+fn my_demo_init()
+{
+    hxsize = demo_xsize div 2
+    hysize = demo_ysize div 2
+    $scr = demo_get_screen()
+
+    halo01 = load( "data/halo01.png" )
+    halo02 = load( "data/halo02.png" )
+    halo03 = load( "data/halo03.png" )
+    halo04 = load( "data/halo04.png" )
+    clouds = load( "data/clouds.png" )
+    set_flags( halo01, CFLAG_INTERP )
+
+    byte_img = new( 64, 64 )
+    set_key_color( byte_img, BLACK )
+    byte_items_count = 32
+    byte_items = new( byte_items_count, 1, INT )
+    rand_seed( 0 )
+    $i = 0 while $i < byte_items_count
+    {
+	$xsize = 8 
+	$ysize = 8
+	$item = new( $xsize, $ysize )
+	set_key_color( $item, BLACK )
+	$xsize div 2
+	$ysize div 2
+	byte_items[ $i ] = $item
+	set_screen( $item )
+	clear()
+	$i2 = 0 while $i2 < 9
+	{
+	    $x = ( ( rand() & 255 ) * $xsize ) div 256
+	    $y = ( ( rand() & 255 ) * $xsize ) div 256
+	    dot( $x, $y, WHITE )
+	    dot( -$x, $y, WHITE )
+	    dot( -$x, -$y, WHITE )
+	    dot( $x, -$y, WHITE )
+	    $i2 + 1
+	}
+	$i + 1
+    }
+    set_screen( $scr )
+    
+    //Build perspective matrix:
+    pmatrix = new( 4, 4, FLOAT )
+    clean( pmatrix )
+    t_reset()
+    t_get_matrix( pmatrix )
+    pmatrix[ 2 * 4 + 3 ] = -0.004
+    pmatrix2 = new( 4, 4, FLOAT )
+    clean( pmatrix2 )
+    t_reset()
+    t_get_matrix( pmatrix2 )
+    pmatrix2[ 2 * 4 + 3 ] = -0.008
+    
+    //Plasma:
+    plasma_pal = load( "data/plasma_pal.png" )
+    plasma_buf1 = new( demo_xsize, demo_ysize, INT8 )
+    plasma_buf2 = new( demo_xsize, demo_ysize, INT8 )
+    
+    //Load font:
+    font = load( "data/font.png" )
+    set_font( 32, font, 16, 6 )
+    set_key_color( font, BLACK )
+    
+    color_filter = clone( $scr )
+    clean( color_filter )
+    $i = 0
+    $y = 0 while $y < demo_ysize
+    {
+	$x = $y & 1
+        $i = $y * demo_xsize + $x
+	while $x < demo_xsize
+        {
+	    color_filter[ $i ] = #101010
+    	    $x + 2
+    	    $i + 2
+        }
+	$y + 1
+    }
+    
+    //Timeline:
+    $t0 = 0 //bit
+    $t1 = $t0 + 512 //byte
+    $t2 = $t1 + 256 + 128 //kbyte
+    $t3 = $t2 + 256 //mbyte
+    $t4 = $t3 + 256
+    $t5 = $t4 + 256
+    $t6 = $t5 + 32
+    demo_add_scene( 0, 1, $t0, demo_scene_stars )
+    demo_add_scene( 0, 1, $t1, DEMO_EMPTY )
+    demo_add_scene( 1, 1, $t0, demo_scene_bit )
+    demo_add_scene( 1, 1, $t1, demo_scene_byte )
+    demo_add_scene( 1, 1, $t2, demo_scene_kbyte )
+    demo_add_scene( 1, 1, $t3, demo_scene_mbyte )
+    demo_add_scene( 1, 1, $t4, demo_scene_gbyte )
+    demo_add_scene( 1, 1, $t5, demo_scene_black )
+    demo_add_scene( 1, 1, $t6, DEMO_STOP )
+    demo_add_scene( 2, 1, $t1 - 32, demo_scene_fade_inout )
+    demo_add_scene( 2, 1, $t1 + 32, DEMO_EMPTY )
+    demo_add_scene( 2, 1, $t2 - 32, demo_scene_fade_inout )
+    demo_add_scene( 2, 1, $t2 + 32, DEMO_EMPTY )
+    demo_add_scene( 2, 1, $t3 - 32, demo_scene_fade_inout )
+    demo_add_scene( 2, 1, $t3 + 32, DEMO_EMPTY )
+    demo_add_scene( 2, 1, $t4 - 32, demo_scene_fade_inout_blured )
+    demo_add_scene( 2, 1, $t4 + 32, DEMO_EMPTY )
+    demo_add_scene( 2, 1, $t5 - 64, demo_scene_fade_inout_blured )
+    demo_add_scene( 2, 1, $t5 + 64, DEMO_EMPTY )
+    demo_add_scene( 3, 0, 0, demo_scene_filter )
+    
+    //demo_set_time( 1, $t4 )
+}
+
+//
+// Scenes
+//
+
+fn demo_scene_filter()
+{
+    $scr = demo_get_screen()
+    effector( EFF_NOISE, 16, WHITE )
+    op_cc( OP_COLOR_SUB, $scr, color_filter )
+    op_cn( OP_AND, $scr, 0b110000001100000011000000 )
+}
+
+fn demo_scene_stars( $t, $t2, $len )
+{
+    $t * 32
+    $t2 * 32
+    $len * 32
+    $tt = $t2 / $len
+
+    clear( BLACK )
+    t_reset()
+    t_rotate( $tt * 360, 0, 0, 1 )
+    rand_seed( 33 )
+    //transp( sin( $t2 / ( 32 * 8 ) * M_PI * 2 ) * 64 + 200 )
+    $i = 0 while $i < 256
+    {
+	$x = ( rand() & 511 ) - 256
+	$y = ( rand() & 511 ) - 256	
+	transp( sin( $t2 / ( 32 * 4 ) + $i * 123 ) * 128 + 128 )
+	dot( $x, $y, get_color( rand() & 255, rand() & 255, rand() & 255 ) )
+	$i + 1
+    }
+    transp( 256 )
+    t_reset()
+}
+
+fn demo_scene_bit( $t, $t2, $len )
+{
+    $t * 32
+    $t2 * 32
+    $len * 32
+    $tt = $t2 / $len
+    
+    $c = get_color( sin( $tt ) * 256, cos( $tt ) * 256, sin( $tt * 2 ) * 256 )
+    $tt * $tt
+    $tt * $tt
+    $tt * 4
+    pixi( halo01, 0, 0, $c, $tt / 4, $tt / 4 )
+    pixi( halo01, 0, 0, $c, $tt / 2, $tt / 2 )
+    pixi( halo01, 0, 0, $c, $tt, $tt )
+    transp( 128 )
+    pixi( halo01, 0, 0, $c, $tt * 4, $tt * 4 )
+    transp( 64 )
+    pixi( halo01, 0, 0, $c, $tt * 8, $tt * 8 )
+    transp( 256 )
+
+    $tt = $t2 / $len
+    transp( 16 * $tt )
+    $tt * 32
+    $size = demo_ysize
+    $i = 0 while $i < 128
+    {
+	$x = sin( $i / 32 + sin( $i ) + $tt ) * $size
+	$y = cos( $i / 64 + cos( $i ) + $tt ) * $size
+	line( 0, 0, $x, $y, WHITE )
+	$i + 1
+    }
+    transp( 256 )
+}
+
+fn demo_scene_byte( $t, $t2, $len )
+{
+    $t * 32
+    $t2 * 32
+    $len * 32
+    $tt = $t2 / $len
+
+    $scr = demo_get_screen()
+    
+    $ttt = ( $t2 / ( 32 * 32 ) ) * M_PI * 2
+    color_gradient( 
+	get_color( sin( $ttt * 2 ) * 128, sin( $ttt * 4 ) * 128, sin( $ttt * 8 ) * 128 ), 
+	255, 
+	get_color( sin( $ttt * 8 ) * 128, sin( $ttt * 4 ) * 128, sin( $ttt * 2 ) * 128 ), 
+	255, 
+	get_color( sin( $ttt * 8 ) * 128, sin( $ttt * 2 ) * 128, sin( $ttt * 4 ) * 128 ), 
+	255,
+	get_color( sin( $ttt * 4 ) * 128, sin( $ttt * 8 ) * 128, sin( $ttt * 2 ) * 128 ), 
+	255 )
+    
+    $size = get_xsize( byte_img ) 
+    $item_xsize = get_xsize( byte_items[ 0 ] )
+    $item_ysize = get_ysize( byte_items[ 0 ] )
+    set_screen( byte_img )
+    clear()
+    $n = ( $t2 div 32 ) % byte_items_count
+    $ttt = ( $t2 / 4096 ) * M_PI * 2
+    $x = 0 while $x <= $size
+    {
+	$y = 0 while $y <= $size
+	{
+	    $nn = ( $x * $n + $y + $n ) % byte_items_count
+	    $c = $x * $y * 12483
+	    pixi( byte_items[ $nn ] , $x - $size / 2, $y - $size / 2, $c )
+	    $y + $item_ysize
+	}
+	$x + $item_xsize
+    }
+    set_screen( $scr )
+
+    $c = get_color( sin( $tt * 2 ) * 256, sin( $tt * 17 ) * 256, cos( $tt * 9 ) * 256 )
+    transp( 200 )
+    t_reset()
+    $s = 2
+    t_rotate( $tt * 1000, 1, 2, 3 )
+    pixi( byte_img )
+    t_rotate( $tt * 1000, 4, 3, 2 )
+    pixi( byte_img, 0, 0, $c, $s * 2, $s * 2 )
+    t_rotate( $tt * 1000, 3, 1, 3 )
+    pixi( byte_img, 0, 0, $c, $s * 4, $s * 4 )
+    t_reset()
+
+    transp( 140 + sin( ( $t2 / ( 32 * 32 ) ) * M_PI * 2 ) * 128 )
+    $s = 2 * $tt
+    t_rotate( $tt * 500, 0, 0, 1 )
+    pixi( halo02, 0, 0, WHITE, $s, $s )
+    t_rotate( $tt * 500, 0, 0, 1 )
+    pixi( halo02, 0, 0, WHITE, -$s * 2, $s * 2 )
+    transp( 256 )
+    t_reset()
+
+    transp( 128 )
+    pixi( $scr, 0, 0, WHITE, 1, -1 )
+    pixi( $scr, 0, 0, WHITE, -1, 1 )
+    transp( 256 )
+
+    transp( 128 )
+    $s = sin( ( $t2 / ( 32 * 16 ) ) * M_PI * 2 ) / 8 + 1
+    pixi( $scr, 0, 0, WHITE, $s, $s )
+    transp( 256 )
+}
+
+fn demo_scene_kbyte( $t, $t2, $len )
+{
+    $t * 32
+    $t2 * 32
+    $len * 32
+    $tt = $t2 / $len
+
+    clear()
+    
+    rand_seed( 0 )
+    $i = 0 while $i < 16
+    {
+	$x = ( ( ( rand() & 1023 ) * demo_xsize ) / 1023 ) - hxsize
+	$y = ( ( ( rand() & 1023 ) * demo_ysize ) / 1023 ) - hysize
+	$s1 = 0.5 + ( rand() & 1023 ) / 400
+	$s2 = $s1 / 2
+	if rand() & 1 { $s1 = -$s1 }
+	if rand() & 1 { $s2 = -$s2 }
+	$r = ( rand() & 255 ) / 64
+	$tr = ( sin( $i * $r + $t2 / ( 32 * 64 ) * M_PI * 2 ) + 1 ) / 2
+	$i2 = 0 while $i2 < 11
+	{
+	    $tr * $tr
+	    $i2 + 1
+	}
+	$tr * 256
+	if $tr >= 1
+	{
+	    transp( $tr )
+	    pixi( halo03, $x, $y, #90B0FF, $s1, $s2 )
+	}
+	$i + 1
+    }
+    transp( 256 )
+    pixi( clouds )
+    
+    t_reset()
+    t_set_matrix( pmatrix )
+    t_rotate( $t2 / 16, 0, 1, 0 )
+    rand_seed( 0 )
+    $items = 256 * $tt
+    $line_transp = 20 * ( sin( $t2 / ( 32 * 32 ) * M_PI * 2 ) + 1 )
+    $c = #8090FF
+    $i = 0 while $i < $items
+    {
+	$n = ( ( rand() & 255 ) + $t2 / ( 32 * 16 ) ) % byte_items_count
+	$x = ( ( ( rand() & 1023 ) * demo_xsize ) / 1023 ) - hxsize
+	$y = ( ( ( rand() & 1023 ) * demo_ysize ) / 1023 ) - hysize
+	$z = ( ( ( rand() & 1023 ) * demo_xsize ) / 1023 ) - hxsize
+	$s = 1 + ( rand() & 1023 ) / 512
+	transp( $line_transp )
+	line3d( $prev_x, $prev_y, $prev_z, $x, $y, $z, $c )
+	$prev_x = $x
+	$prev_y = $y
+	$prev_z = $z
+	t_push_matrix()
+	t_translate( $x, $y, $z )
+	t_rotate( $t2 / 9 + $i * 40, 0, 0, 1 )
+	t_rotate( $t2 / 8 + $i * 20, 1, 4, 2 )
+	transp( 128 * ( sin( $t2 / 128 + $i ) + 1 ) )
+	pixi( byte_items[ $n ], 0, 0, $c, $s, $s )
+	t_pop_matrix()
+	$i + 1
+    }
+    t_reset()
+    transp( 256 )
+}
+
+fn demo_scene_mbyte( $t, $t2, $len )
+{
+    $t * 32
+    $t2 * 32
+    $len * 32
+    $tt = $t2 / $len
+    $t3 = $t2 / ( 32 * 128 ) * M_PI * 2
+    
+    $scr = demo_get_screen()
+    
+    $v = $tt / 10
+    generator( OP_SIN8, plasma_buf1, -hxsize * $v - ( M_PI / 2 ) , 128, $v, 0 )
+    generator( OP_SIN8, plasma_buf2, -hysize * $v - ( M_PI / 2 ), 128, 0, $v )
+    op_cc( OP_XOR, plasma_buf1, plasma_buf2 )
+    $v = $tt / 8
+    generator( OP_SIN8, plasma_buf2, -hysize * $v - ( M_PI / 2 ) + $t3, 128, 0, $v )
+    op_ccn( OP_MUL_DIV, plasma_buf1, plasma_buf2, 32 )
+    replace_values( $scr, plasma_buf1, plasma_pal )
+
+    rand_seed( 0 )
+    $i = 0 while $i < 8
+    {
+	$x = ( ( ( rand() & 1023 ) * demo_xsize ) / 1023 ) - hxsize
+	$y = ( ( ( rand() & 1023 ) * demo_ysize ) / 1023 ) - hysize
+	$s = 0.5 + ( rand() & 1023 ) / 1024
+	if rand() & 1 { $s1 = -$s1 }
+	if rand() & 1 { $s2 = -$s2 }
+	$r = ( rand() & 255 ) / 64
+	$tr = ( sin( $i * $r + $t2 / ( 32 * 64 ) * M_PI * 2 ) + 1 ) / 2
+	$i2 = 0 while $i2 < 2
+	{
+	    $tr * $tr
+	    $i2 + 1
+	}
+	$tr * 256
+	if $tr >= 1
+	{
+	    transp( $tr )
+	    pixi( halo04, $x, $y, WHITE, $s, $s )
+	}
+	$i + 1
+    }
+    transp( 256 )
+    
+    transp( 200 )
+    t_set_matrix( pmatrix2 )
+    rand_seed( 33 )
+    $i = 0 while $i < 64
+    {
+	$x = ( ( rand() & 1023 ) / 1024 ) * demo_xsize - hxsize
+	$y = ( ( rand() & 1023 ) / 1024 ) * demo_ysize - hysize
+	$s = ( ( rand() & 1023 ) / 1024 ) * ( demo_xsize / 4 ) * $tt
+	t_push_matrix()
+	t_translate( $x, $y, 0 )
+	t_rotate( $tt * 2000 + $i * 33, 0, 1, 0 )
+	$c = get_color( sin( $i ) * 128 + 220, cos( $i / 3 ) * 128 + 220, sin( $i / 2 ) * 128 + 220 )
+	pixi( $scr, 0, 0, $c, 1, 1, $x + hxsize, $y + hysize, $s, $s )
+	t_pop_matrix()
+	$i + 1
+    }
+    t_reset()
+    transp( 256 )
+}
+
+fn demo_scene_gbyte( $t, $t2, $len )
+{
+    $t * 32
+    $t2 * 32
+    $len * 32
+    $tt = $t2 / $len
+    $t3 = $t2 / ( 32 * 128 ) * M_PI * 2
+
+    $scr = demo_get_screen()
+
+    $c1 = get_color( ( sin( $t3 / 1 ) + 1 ) * 128, ( cos( $t3 / 1 ) + 1 ) * 128, ( sin( $t3 / 2 ) + 1 ) * 128 )
+    $c2 = get_color( ( sin( $t3 / 2 ) + 1 ) * 128, ( cos( $t3 / 5 ) + 1 ) * 128, ( sin( $t3 / 3 ) + 1 ) * 128 )
+    $c3 = get_color( ( sin( $t3 / 3 ) + 1 ) * 128, ( cos( $t3 / 2 ) + 1 ) * 128, ( sin( $t3 / 4 ) + 1 ) * 128 )
+    $c4 = get_color( ( sin( $t3 / 4 ) + 1 ) * 128, ( cos( $t3 / 7 ) + 1 ) * 128, ( sin( $t3 / 5 ) + 1 ) * 128 )
+    color_gradient( $c1, 255, $c2, 255, $c3, 255, $c4, 255 )
+
+    transp( 200 )
+    t_set_matrix( pmatrix2 )
+    rand_seed( 33 )
+    $i = 0 while $i < 64
+    {
+	$x = ( ( rand() & 1023 ) / 1024 ) * demo_xsize - hxsize
+	$y = ( ( rand() & 1023 ) / 1024 ) * demo_ysize - hysize
+	$s = ( ( rand() & 1023 ) / 1024 ) * ( demo_xsize / 4 )
+	t_push_matrix()
+	t_translate( $x, $y, 0 )
+	t_rotate( $tt * 1000 + $i * 33, 0, 1, 0 )
+	t_rotate( $tt * 500 + $i * 33, 1, 0, 0 )
+	pixi( $scr, 0, 0, WHITE, 1, 1, $x + hxsize, $y + hysize, $s, $s )
+	t_pop_matrix()
+	$i + 1
+    }
+    t_reset()
+    transp( 256 )
+    
+    $tc = ( $tt * 4 ) div 1
+    $ts = ""
+    if $tc == 0
+    {
+	$ts = "6bit Genesis"
+    }
+    if $tc == 1
+    {
+	$ts = "by NightRadio"
+    }
+    if $tc == 2
+    {
+	$ts = "engines
+SunVox | Pixilang"
+    }
+    if $tc == 3
+    {
+	$ts = "warmplace.ru"
+    }
+    print( $ts, 0, 0, BLACK )
+}
+
+fn demo_scene_black( $t, $t2, $len )
+{
+    clear()
+}
+
+fn demo_scene_fade_inout( $t, $t2, $len )
+{
+    $t * 32
+    $t2 * 32
+    $len * 32
+    $tt = $t2 / $len
+    $tt * 2
+    if $tt > 1 { $tt = 1 - ( $tt - 1 ) }
+    $tt * $tt
+    $tt * $tt
+    $tt * $tt
+    transp( $tt * 256 )
+    clear( WHITE )
+    transp( 256 )
+}
+
+fn demo_scene_fade_inout_blured( $t, $t2, $len )
+{
+    $t * 32
+    $t2 * 32
+    $len * 32
+    $tt = $t2 / $len
+    $tt * 2
+    if $tt > 1 { $tt = 1 - ( $tt - 1 ) }
+    $tt * $tt
+    $tt * $tt
+    $tt * $tt
+    effector( EFF_HBLUR, $tt * 256, WHITE )
+    transp( $tt * 256 )
+    clear( WHITE )
+    transp( 256 )
+}

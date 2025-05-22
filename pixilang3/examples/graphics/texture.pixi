@@ -1,0 +1,32 @@
+set_pixel_size( WINDOW_XSIZE / 480 )
+resize( get_screen(), WINDOW_XSIZE, WINDOW_YSIZE )
+
+img = new( 233, 203 )
+size = get_size( img )
+i = 0 while( i < size )
+{
+    x = i % get_xsize( img )
+    if x & 1 { img[ i ] = BLUE } else { img[ i ] = WHITE }
+    if ( i / get_xsize( img ) ) & 1 { img[ i ] = BLUE }
+    i + 1
+}
+
+start_timer( 0 )
+
+start:
+
+t = get_timer( 0 ) / 50000
+
+clear( #202020 )
+
+transp( 32 )
+pixi( img, 0, 0, WHITE, sin( t ) * 8, sin( t )  * 8 )
+//pixi( img, 0, 0, WHITE, 1, 1 )
+
+//box( -92, -1000, 0, 2000 )
+
+while( get_event() ) { if EVT[ EVT_TYPE ] == EVT_QUIT { halt } }
+
+frame()
+
+go start

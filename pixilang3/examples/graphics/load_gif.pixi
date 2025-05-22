@@ -1,0 +1,23 @@
+set_pixel_size( WINDOW_XSIZE / 480 )
+resize( get_screen(), WINDOW_XSIZE, WINDOW_YSIZE )
+
+img = load( "images/test.gif" )
+play( img )
+
+img2 = clone( img )
+
+while( 1 )
+{
+    clear( BLACK )
+    effector( EFF_NOISE, 256, #808080 )
+
+    pixi( img, -64, 0 )
+    pixi( img2, 64, 0, YELLOW )
+
+    ts = "" sprintf( ts, "FPS:%u", FPS ) print( ts, -get_xsize( get_screen() ) / 2 + 8, -get_ysize( get_screen() ) / 2 + 8, WHITE, TOP | LEFT )
+
+    while( get_event() ) { if EVT[ EVT_TYPE ] == EVT_QUIT { halt } }
+
+    frame()
+}
+

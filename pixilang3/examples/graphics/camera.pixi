@@ -1,0 +1,117 @@
+set_pixel_size( WINDOW_XSIZE / 480 )
+resize( get_screen(), WINDOW_XSIZE, WINDOW_YSIZE )
+
+scr = get_screen()
+xsize = get_xsize( scr )
+ysize = get_ysize( scr )
+
+fn camera_callback( $video_container, $user_data )
+{
+    $type = 0 //0 - normal; 1 - grayscale8
+    $flags = 1 //no autorotate
+    video_capture_frame( $video_container, cam_frame, $type, $flags )
+}
+
+cam = video_open( "camera", VIDEO_OPEN_FLAG_READ, camera_callback, 0 )
+if cam < 0
+{
+    clear( BLACK )
+    print( "Camera can't be opened on your device.\nCurrently supported platforms:\n * Android;\n * iOS;\n * Linux.", -get_xsize( scr ) / 2, -get_ysize( scr ) / 2, WHITE, LEFT | TOP )
+    while 1
+    {
+	while( get_event() ) { if EVT[ EVT_TYPE ] == EVT_QUIT { halt } }
+	frame()
+    }
+}
+
+cam_props = new( 2, 3, INT )
+cam_props[ 0, 0 ] = VIDEO_PROP_FRAME_WIDTH
+cam_props[ 0, 1 ] = VIDEO_PROP_FRAME_HEIGHT
+cam_props[ 0, 2 ] = VIDEO_PROP_FOCUS_MODE
+if video_get_props( cam, cam_props ) == 0
+{
+    frame_xsize = cam_props[ 1, 0 ]
+    frame_ysize = cam_props[ 1, 1 ]
+    focus_mode = cam_props[ 1, 2 ]
+    logf( "Default camera frame size: %d x %d\n", frame_xsize, frame_ysize )
+    if focus_mode == VIDEO_FOCUS_MODE_AUTO { fmode = "AUTO" }
+    if focus_mode == VIDEO_FOCUS_MODE_CONTINUOUS { fmode = "CONTINUOUS" }
+    logf( "Focus mode: %s %d\n", fmode, focus_mode )
+}
+else
+{
+    logf( "Unknown camera frame size\n" )
+    video_close( cam )
+    halt
+}
+remove( cam_props )
+
+cam_frame = new( frame_xsize, frame_ysize )
+cam_frame2 = new( frame_xsize, frame_ysize )
+cam_r = new( frame_xsize, frame_ysize, INT16 )
+cam_g = new( frame_xsize, frame_ysize, INT16 )
+cam_b = new( frame_xsize, frame_ysize, INT16 )
+
+video_start( cam )
+
+clear( BLACK )
+cam_props = new( 2, 2, INT )
+cam_props[ 0, 0 ] = VIDEO_PROP_FPS
+cam_props[ 0, 1 ] = VIDEO_PROP_ORIENTATION
+while 1
+{
+    video_get_props( cam, cam_props )
+    $fps = cam_props[ 1, 0 ]
+    $orient = cam_props[ 1, 1 ] //angle in degrees = orient * 90; counterclockwise (против часовой стрелки)
+
+    //Normalize:
+    copy( cam_frame2, cam_frame )
+    set_screen( cam_frame2 )
+    effector( EFF_HBLUR, 8, WHITE )
+    set_screen( scr )
+    split_rgb( 0, cam_frame2, cam_r, cam_g, cam_b )
+    $max1 = op_cn( OP_MAX, cam_r )
+    $max2 = op_cn( OP_MAX, cam_g )
+    $max3 = op_cn( OP_MAX, cam_b )
+    if $max2 > $max1 { $max1 = $max2 }
+    if $max3 > $max1 { $max1 = $max3 }
+    if $max1 < 255
+    {
+	if $max1 < 1 { $max1 = 1 }
+	split_rgb( 0, cam_frame, cam_r, cam_g, cam_b )
+	op_cn( OP_MUL, cam_r, 255 / $max1 )
+	op_cn( OP_MUL, cam_g, 255 / $max1 )
+	op_cn( OP_MUL, cam_b, 255 / $max1 )
+	split_rgb( 1, cam_frame2, cam_r, cam_g, cam_b )
+	$img = cam_frame2
+    }
+    else
+    {
+	$img = cam_frame
+    }
+    
+    //Draw:
+    clear()
+    s = ysize / frame_ysize
+    t_reset()
+    if $orient { t_rotate( $orient * 90, 0, 0, -1 ) }
+    pixi( $img, 0, 0, WHITE, s, s )
+    t_reset()
+
+    ts = ""	sprintf( ts, "FPS: %d\nORIENTATION: %d", $fps, $orient  )
+    print( ts, -xsize / 2 + 8, -ysize / 2 + 8, WHITE, LEFT | TOP )
+
+    while( get_event() ) 
+    {
+	if EVT[ EVT_TYPE ] == EVT_BUTTONDOWN
+        {
+            key = EVT[ EVT_KEY ]
+            if key == ' ' { sprintf( ts, "camera%02d.png", cc ) cc = cc + 1 save( $img, ts, FORMAT_PNG ) }
+        } 
+	if EVT[ EVT_TYPE ] == EVT_QUIT { breakall } 
+    }
+    frame()
+}
+
+video_stop( cam )
+video_close( cam )

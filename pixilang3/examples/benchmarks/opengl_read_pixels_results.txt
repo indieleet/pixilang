@@ -1,0 +1,49 @@
+PC
+x86_64; Core i3; Linux; 32bit color; OpenGL version: 3.0 Mesa 9.2.2. Renderer: Mesa DRI Intel(R) Ivybridge Mobile . GLSL: 1.30.
+480 x 320 : 2.142336 ms; 501.946655 FPS; 77 mpixels per second
+240 x 160 : 0.623605 ms; 1699.281494 FPS; 65 mpixels per second
+120 x 80 : 0.253724 ms; 4123.638672 FPS; 39 mpixels per second
+60 x 40 : 0.169000 ms; 6260.084961 FPS; 15 mpixels per second
+
+LG Optimus Hub
+ARM; ; Android; 16bit color; OpenGL version: OpenGL ES-CM 1.1. Renderer: Adreno (TM) 200.
+480 x 320 : 7.794000 ms; 129.760681 FPS; 19 mpixels per second
+240 x 160 : 3.299604 ms; 307.898804 FPS; 11 mpixels per second
+120 x 80 : 2.105523 ms; 482.547729 FPS; 4 mpixels per second
+60 x 40 : 1.833905 ms; 554.153931 FPS; 1 mpixels per second
+
+LG Optimus Hub
+ARM; ; Android; 32bit color; OpenGL version: OpenGL ES-CM 1.1. Renderer: Adreno (TM) 200.
+480 x 320 : 33.172882 ms; 32.802296 FPS; 5 mpixels per second
+240 x 160 : 12.049636 ms; 90.396774 FPS; 3 mpixels per second
+120 x 80 : 4.269592 ms; 237.328705 FPS; 2 mpixels per second
+60 x 40 : 2.352115 ms; 432.418610 FPS; 1 mpixels per second
+
+Texet
+ARM; ; Android; 16bit color; OpenGL version: OpenGL ES-CM 1.1. Renderer: Mali-400 MP.
+1280 x 752 : 250.704041 ms; 4.025880 FPS; 3 mpixels per second
+640 x 376 : 61.978104 ms; 16.135910 FPS; 3 mpixels per second
+320 x 188 : 34.033794 ms; 30.741753 FPS; 1 mpixels per second
+160 x 94 : 10.788506 ms; 93.221771 FPS; 1 mpixels per second
+
+Texet
+ARM; ; Android; 32bit color; OpenGL version: OpenGL ES-CM 1.1. Renderer: Mali-400 MP.
+1280 x 752 : 277.881531 ms; 3.599078 FPS; 3 mpixels per second
+640 x 376 : 70.501549 ms; 14.189754 FPS; 3 mpixels per second
+320 x 188 : 19.670542 ms; 51.272057 FPS; 3 mpixels per second
+160 x 94 : 6.541427 ms; 154.284927 FPS; 2 mpixels per second
+
+Sony C2305
+ARM; ; Android; 16bit color; OpenGL version: OpenGL ES-CM 1.1. Renderer: PowerVR SGX 544MP.
+897 x 540 : 85.337646 ms; 13.495307 FPS; 6 mpixels per second
+448 x 270 : 27.046362 ms; 37.576374 FPS; 4 mpixels per second
+224 x 135 : 10.719332 ms; 93.476196 FPS; 2 mpixels per second
+112 x 67 : 6.332727 ms; 158.363281 FPS; 1 mpixels per second
+
+Sony C2305
+ARM; ; Android; 32bit color; OpenGL version: OpenGL ES-CM 1.1. Renderer: PowerVR SGX 544MP.
+897 x 540 : 78.072235 ms; 12.965031 FPS; 6 mpixels per second
+448 x 270 : 21.911507 ms; 45.643944 FPS; 5 mpixels per second
+224 x 135 : 9.237023 ms; 108.563889 FPS; 3 mpixels per second
+112 x 67 : 5.893724 ms; 169.725876 FPS; 1 mpixels per second
+

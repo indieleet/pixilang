@@ -1,0 +1,27 @@
+include "../show_log.pixi"
+include "../../../lib/string.pixi"
+
+test( "hello pixi, text2, text3", ", " )
+test( "hello pixi, text2, text3", " " )
+test( "Hello Pixi !", ", " )
+
+fn test( $input, $separator )
+{
+    $strings = split_string( $input, $separator )
+    logf( "INPUT STRING: \"%s\"\n", $input )
+    logf( "SEPARATOR: \"%s\"\n", $separator )
+    logf( "OUTPUT STRINGS:\n" )
+    $str_count = get_size($strings)
+    for( $i = 0; $i < $str_count; $i + 1 )
+    {
+	logf( "%d: \"%s\"\n", $i, $strings[ $i ] )
+    }
+    logf( "\n" )
+    for( $i = 0; $i < $str_count; $i + 1 )
+    {
+	remove( $strings[ $i ] )
+    }
+    remove( $strings )
+}
+
+show_log()

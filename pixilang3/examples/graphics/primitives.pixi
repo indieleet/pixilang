@@ -1,0 +1,43 @@
+set_pixel_size( WINDOW_XSIZE / 480 )
+resize( get_screen(), WINDOW_XSIZE, WINDOW_YSIZE )
+
+include "../../lib/gfx_primitives.pixi"
+
+scr = get_screen()
+xsize = get_xsize( scr )
+ysize = get_ysize( scr )
+hxsize = xsize div 2
+hysize = ysize div 2
+
+start_timer( 0 )
+
+start:
+
+t = get_timer( 0 ) / 1000
+clear()
+t_reset()
+
+color_gradient( RED, 255, GREEN, 255, BLUE, 255, YELLOW, 255, -hxsize, -hysize, xsize, ysize )
+circle( 0, 0, xsize / 4, ( sin( t * 3 ) + 1 ) * 64, WHITE )
+transp( 128 )
+fcircle( 0, 0, xsize / 8, ( sin( t * 3 ) + 1 ) * 64, YELLOW )
+transp( 256 )
+star( 0, 0, sin( t ) * xsize / 6, cos( t ) * xsize / 6, 16, WHITE )
+transp( 128 )
+fstar( 0, 0, sin( t ) * xsize / 5, cos( t ) * ysize, 16, #FF8040 )
+transp( 200 )
+s = ( sin( t ) + 1 ) * hysize / 2 + hysize/5
+farrow( 0, 0, cos( t ) * s, sin( t ) * s, ysize/16, ysize/8, ysize/16, 0, YELLOW )
+transp( 255 )
+    
+ts = ""
+sprintf( ts, "FPS:%u", FPS )
+print( ts, -hxsize + 8, -hysize + 8, WHITE, TOP | LEFT )
+
+while( get_event() ) { if EVT[ EVT_TYPE ] == EVT_QUIT { go end } }
+frame()
+go start
+
+end:
+
+show_memory_debug_messages( 1 )

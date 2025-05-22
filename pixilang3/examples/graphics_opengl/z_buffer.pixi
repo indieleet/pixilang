@@ -1,0 +1,50 @@
+set_pixel_size( WINDOW_XSIZE / 480 )
+
+//Read GL_CALLBACK.txt for more information
+fn gl_callback( $userdata )
+{
+    t = get_timer( 0 ) / 32
+    
+    set_screen( GL_SCREEN )
+    set_zbuf( GL_ZBUF )
+    
+    clear()
+    clear_zbuf()
+    
+    t_set_matrix( matrix )
+    t_rotate( t, 1, 2, 3 )
+    pixi( img )
+    t_set_matrix( matrix )
+    t_rotate( -t, 3, 2, 1 )
+    pixi( img, 0, 0, GREEN )
+    
+    set_zbuf( -1 )
+    t_reset()
+    ts = ""
+    sprintf( ts, "FPS:%u", FPS )
+    print( ts, -WINDOW_XSIZE div 2 + 8, -WINDOW_YSIZE div 2 + 8, WHITE, TOP | LEFT )
+    
+    set_zbuf( -1 )
+    set_screen( 0 )
+}
+
+//Create perspective matrix:
+matrix = new( 4, 4, FLOAT )
+clean( matrix )
+t_reset()
+t_get_matrix( matrix )
+matrix[ 2 * 4 + 3 ] = -0.004
+
+img = load( "../graphics/images/test.jpg" )
+set_flags( img, GL_MIN_LINEAR | GL_MAG_LINEAR )
+
+start_timer( 0 )
+
+set_gl_callback(
+    gl_callback, //OpenGL frame drawing function
+    0 ) //Some user-defined data
+
+start:
+while( get_event() ) { if EVT[ EVT_TYPE ] == EVT_QUIT { halt } }
+frame()
+go start

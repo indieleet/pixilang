@@ -1,0 +1,42 @@
+Requirements:
+make, gcc, MinGW (Windows), Android NDK
+Linux libs: libsdl2-dev, libasound2-dev, libjack-jackd2-dev
+
+For Android, macOS and iOS:
+set correct SDK/NDK/compiler paths in the lib_sundog/sundog_makefile.inc
+
+Android:
+1) run resources/collect_android_resources; this will create the following files:
+  * android_project/app/src/main/res/raw/files - ZIP with all Pixilang examples; this file will be unpacked into the app internal storage on the first start;
+  * android_project/app/src/main/res/raw/hash - hash of the above file;
+2) run MAKE_ANDROID; this will compile the Pixilang native code (android_project/app/src/main/jniLibs)
+3) open android_project/ in Android Studio and build the APK.
+
+How to make APK with your own Pixilang-based app for Android:
+1) use the Pixilang Android project (in pixilang3/make/android_project folder) as a template with the following changes:
+  * change nightradio.pixilang to your own appid in all files where it occurs (java, gradle, xml);
+  * change the names of the folders app/src/main/java/nightradio/pixilang to match your appid; for example - app/src/main/java/companyname/appname;
+2) create a ZIP archive containing the following files:
+  * boot.pixi or boot.pixicode - the startup code of your program;
+  * some resources (pictures, sounds, etc.);
+3) rename the zip archive to "files" (without extension);
+4) create a folder pixilang3/make/android_project/app/src/main/res/raw and copy the "files" into this folder;
+5) in the same folder create a file called "hash";
+   put the version of the "files" in it - this can be a text string with the date of the last change, or some kind of checksum;
+   the app will check this string when launched - if it has changed, then the "files" archive will be unpacked into the internal storage of the program.
+6) download Android NDK and write its path in lib_sundog/sundog_makefile.inc (see the line ANDROID_NDK = ...);
+7) execute MAKE_ANDROID script;
+8) if the build is successful, then open Android Studio, load pixilang3/android_project and build the final APK file.
+
+iOS:
+open ios_project/ in XCode and build the app.
+
+macOS:
+open macos_project/ in XCode and build the app.
+
+Other systems:
+just use one of the MAKE_* scripts in Linux/macOS Terminal;
+the built version of the app will be copied to one of the bin/* folders
+
+When the build is finished:
+make clean
